@@ -64,9 +64,63 @@ public class DWGraph_DS implements directed_weighted_graph
         {
             tag=t;
         }
+
+    }
+    public class edgeData implements edge_data
+    {
+        int src;
+        int dest;
+        double w;
+        String info;
+        int tag;
+        public edgeData(int src,int dest,double w)
+        {
+           this.src=src;
+            this.dest=dest;
+            this.w=w;
+        }
+
+        @Override
+        public int getSrc() {
+            return src;
+        }
+
+        @Override
+        public int getDest() {
+            return dest;
+        }
+
+        @Override
+        public double getWeight() {
+            return w;
+        }
+
+        @Override
+        public String getInfo() {
+            return info;
+        }
+
+        @Override
+        public void setInfo(String s) {
+            info=s;
+
+        }
+
+        @Override
+        public int getTag() {
+            return tag;
+        }
+
+        @Override
+        public void setTag(int t) {
+            tag=t;
+
+        }
     }
     HashMap<Integer,node_data> nodeHash=new HashMap<>();
     HashMap<Integer,HashMap<Integer,edge_data>>edgeHash=new HashMap<>();
+    int edges;
+    int modeCount;
     @Override
     public node_data getNode(int key)
     {
@@ -75,7 +129,7 @@ public class DWGraph_DS implements directed_weighted_graph
 
     @Override
     public edge_data getEdge(int src, int dest) {
-        return null;
+        return edgeHash.get(src).get(dest);
     }
 
     @Override
@@ -92,8 +146,16 @@ public class DWGraph_DS implements directed_weighted_graph
             return;
         if(!nodeHash.containsKey(src)||!nodeHash.containsKey(dest))
             return;
-        
-
+        edge_data tempEdge=getEdge(src,dest);
+        if (tempEdge != null)
+        {
+            if (w == tempEdge.getWeight())
+                return;
+            edges--;
+        }
+        edgeHash.get(src).put(dest,new edgeData(src,dest,w));
+        edges++;
+        modeCount++;
     }
 
     @Override
@@ -113,21 +175,28 @@ public class DWGraph_DS implements directed_weighted_graph
 
     @Override
     public edge_data removeEdge(int src, int dest) {
+        edge_data tempEdge= edgeHash.get(src).remove(dest);
+        if(tempEdge!=null)
+        {
+            edges--;
+            modeCount++;
+            return tempEdge;
+        }
         return null;
     }
 
     @Override
     public int nodeSize() {
-        return 0;
+        return nodeHash.size();
     }
 
     @Override
     public int edgeSize() {
-        return 0;
+        return edges;
     }
 
     @Override
     public int getMC() {
-        return 0;
+        return modeCount;
     }
 }
