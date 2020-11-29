@@ -66,4 +66,9 @@ public class EdgeData implements edge_data
                 &&this.info==((EdgeData) o).info;
 
     }
+    @Override
+    public String toString()
+    {
+        return "edge src : "+ src+ "\n"+"edge dest :"+dest+"\n"+"edge Weight : "+w;
+    }
 }

@@ -83,9 +83,19 @@ class DWGraph_DSTest {
 
     }
 
-    @Test
-    void removeNode() {
+//    @Test
+//    void removeNode() {
+//    }
+@Test
+void removeNode() {
+    directed_weighted_graph g = graphBuilder(3);
+    for (int i = 0; i <g.nodeSize() ; i++) {
+        g.connect(0,i,i);
     }
+    assertEquals(2,g.edgeSize());
+    g.removeNode(0);
+    assertEquals(0,g.edgeSize());
+}
 
     @Test
     void removeEdge() {

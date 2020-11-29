@@ -70,5 +70,10 @@ public class NodeData implements node_data {
         return this.key == ((NodeData) o).key;
 
     }
+    @Override
+    public String toString()
+    {
+        return "node key : " + key;
+    }
 }
 

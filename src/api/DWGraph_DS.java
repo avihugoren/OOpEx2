@@ -39,16 +39,21 @@ public class DWGraph_DS implements directed_weighted_graph
     }
 
     @Override
-    public edge_data getEdge(int src, int dest) {
+    public edge_data getEdge(int src, int dest)
+    {
+        if(!edgeHashOut.containsKey(src))
+            return null;
         return edgeHashOut.get(src).get(dest);
     }
 
     @Override
     public void addNode(node_data n)
     {
+        if(!nodeHash.containsKey(n.getKey()))
         nodeHash.put(n.getKey(),n);
         edgeHashOut.put(n.getKey(),new HashMap<Integer,edge_data>());
         edgeHashIn.put(n.getKey(),new HashMap<Integer,Integer>());
+        modeCount++;
     }
 
     @Override
@@ -82,7 +87,9 @@ public class DWGraph_DS implements directed_weighted_graph
     @Override
     public Collection<edge_data> getE(int node_id)
     {
+        if(edgeHashOut.containsKey(node_id))
         return edgeHashOut.get(node_id).values();
+        return null;
     }
 
     @Override
@@ -90,9 +97,20 @@ public class DWGraph_DS implements directed_weighted_graph
     {
         if(this.getNode(key) == null)
             return null;
-        edgeHashOut.remove(key);
         for(Integer inte :edgeHashIn.get(key).keySet())
-            removeEdge(inte,key);
+        {
+            edgeHashOut.get(inte).remove(key);
+            edges--;
+            modeCount++;
+        }
+        for(Integer inte :edgeHashOut.get(key).keySet())
+        {
+            edgeHashIn.get(inte).remove(key);
+            edges--;
+            modeCount++;
+        }
+
+        edgeHashOut.remove(key);
         edgeHashIn.remove(key);
         modeCount++;
         return nodeHash.remove(key);
@@ -146,5 +164,17 @@ public class DWGraph_DS implements directed_weighted_graph
             }
         }
         return true;
+    }
+    @Override
+    public String toString()
+    {
+        StringBuilder s=new StringBuilder();
+        for (node_data node:nodeHash.values())
+            s.append(node+"\n");
+        for(Integer Inte:edgeHashOut.keySet())
+            for (edge_data edge:getE(Inte))
+                s.append(edge+"\n");
+            return s.toString();
+
     }
 }
