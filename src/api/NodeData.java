@@ -4,6 +4,7 @@ public class NodeData implements node_data {
     double weight;
     String info;
     int tag;
+    geo_location geo=new GeoLocation(0,0,0);
     public NodeData(node_data n)
     {
         this.key=n.getKey();
@@ -23,11 +24,12 @@ public class NodeData implements node_data {
 
     @Override
     public geo_location getLocation() {
-        return null;
+        return geo;
     }
 
     @Override
     public void setLocation(geo_location p) {
+
 
     }
 

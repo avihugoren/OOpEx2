@@ -19,6 +19,7 @@ public class DWGraph_Algo implements dw_graph_algorithms
     }
     @Override
     public void init(directed_weighted_graph g) {
+        myGraph=g;
 
     }
 
@@ -50,7 +51,7 @@ public class DWGraph_Algo implements dw_graph_algorithms
     @Override
     public boolean save(String file)
     {
-        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        Gson gson= new GsonBuilder().registerTypeAdapter(DWGraph_DS.class,new GraphJson()).create();
         String json=gson.toJson(myGraph);
         //Write json to file
         try {
@@ -68,9 +69,11 @@ public class DWGraph_Algo implements dw_graph_algorithms
 
     @Override
     public boolean load(String file) {
+        if(myGraph==null)
+            return false;
         try {
             GsonBuilder builder=new GsonBuilder();
-            builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJsonDeserializer());
+            builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJson());
             {
                 Gson json = builder.create();
            FileReader reader= new FileReader(file);
