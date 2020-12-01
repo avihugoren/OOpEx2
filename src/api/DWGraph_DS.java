@@ -14,19 +14,19 @@ public class DWGraph_DS implements directed_weighted_graph
     int modeCount;
     public DWGraph_DS(directed_weighted_graph graph)
     {
-        for(node_data node:graph.getV())
-        {
+        for (node_data node : graph.getV()) {
             nodeHash.put(node.getKey(), new NodeData(node));
-            edgeHashOut.put(node.getKey(),new HashMap<Integer,edge_data>());
-            edgeHashIn.put(node.getKey(),new HashMap<Integer,Integer>());
-            for(edge_data edge:graph.getE(node.getKey()))
-            {
-                edgeHashOut.get(edge.getSrc()).put(edge.getDest(),new EdgeData(edge));
-                edgeHashIn.get(edge.getDest()).put(edge.getSrc(),edge.getSrc());
+            edgeHashOut.put(node.getKey(), new HashMap<Integer, edge_data>());
+            edgeHashIn.put(node.getKey(), new HashMap<Integer, Integer>());
+        }
+        for (node_data node : graph.getV()) {
+            for (edge_data edge : graph.getE(node.getKey())) {
+                edgeHashOut.get(node.getKey()).put(edge.getDest(), new EdgeData(edge));
+                edgeHashIn.get(edge.getDest()).put(node.getKey(), node.getKey());
             }
         }
-        edges= graph.edgeSize();
-        int modeCount= graph.getMC();
+        edges = graph.edgeSize();
+        int modeCount = graph.getMC();
     }
     public DWGraph_DS()
     {
