@@ -11,8 +11,19 @@ class DWGraph_DSTest {
         }
         return g;
     }
+    @Test
+    void copyConstructor(){
 
+        directed_weighted_graph g = new DWGraph_DS();
+        g.addNode(new NodeData(0));
+        g.addNode(new NodeData(1));
+        g.addNode(new NodeData(2));
+        g.connect(0,1,2);
+        g.connect(0,2,2);
+        directed_weighted_graph g1 = new DWGraph_DS(g);
+        assertEquals(g,g1);
 
+    }
     @Test
     void getNode() {
         directed_weighted_graph g = graphBuilder(50);
