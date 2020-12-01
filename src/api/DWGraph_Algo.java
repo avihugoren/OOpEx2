@@ -17,8 +17,9 @@ public class DWGraph_Algo implements dw_graph_algorithms
     {
         myGraph=g;
     }
-    public void init(directed_weighted_graph g)
-    {
+
+    @Override
+    public void init(directed_weighted_graph g) {
         myGraph=g;
     }
 
@@ -146,41 +147,43 @@ public class DWGraph_Algo implements dw_graph_algorithms
     @Override
     public boolean save(String file)
     {
-//        Gson gson=new GsonBuilder().setPrettyPrinting().create();
-//        String json=gson.toJson(myGraph);
-//        //Write json to file
-//        try {
-//            PrintWriter pw=new PrintWriter(new File(file));
-//            pw.write(json);
-//            pw.close();
-//        }
-//        catch (FileNotFoundException e)
-//        {
-//            System.out.println("File not found");
-//            return false;
-//    }
+
+        Gson gson= new GsonBuilder().registerTypeAdapter(DWGraph_DS.class,new GraphJson()).create();
+        String json=gson.toJson(myGraph);
+        //Write json to file
+        try {
+            PrintWriter pw=new PrintWriter(new File(file));
+            pw.write(json);
+            pw.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("File not found");
+            return false;
+    }
         return true;
     }
 
     @Override
     public boolean load(String file) {
-//        try {
-//            GsonBuilder builder=new GsonBuilder();
-//            builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJsonDeserializer());
-//            {
-//                Gson json = builder.create();
-//           FileReader reader= new FileReader(file);
-//           directed_weighted_graph g= json.fromJson(reader,directed_weighted_graph.class);
-//           myGraph=g;
-//        }
-//        }
-//        catch (FileNotFoundException fileNotFoundException) {
-//            System.out.println("file not found");
-//            return false;
-//        }
+      if(myGraph==null)
+            return false;
+        try {
+            GsonBuilder builder=new GsonBuilder();
+            builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJson());
+            {
+                Gson json = builder.create();
+           FileReader reader= new FileReader(file);
+           directed_weighted_graph g= json.fromJson(reader,directed_weighted_graph.class);
+           myGraph=g;
+        }
+        }
+        catch (FileNotFoundException fileNotFoundException) {
+            System.out.println("file not found");
+            return false;
+        }
+
         return true;
     }
-
-
 
     }

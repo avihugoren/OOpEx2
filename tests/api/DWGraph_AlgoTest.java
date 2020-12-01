@@ -68,6 +68,14 @@ class DWGraph_AlgoTest {
         algo.load("testload");
         System.out.println(algo.getGraph());
         assertEquals(g,algo.getGraph());
+        //empty graph
+        directed_weighted_graph emptyGraph=new DWGraph_DS();
+        algo.init(emptyGraph);
+        assertTrue(algo.save("emptyGraph"));
+        algo.load("emptyGraph");
+        assertEquals(emptyGraph,algo.getGraph());
+
+
     }
 
     public directed_weighted_graph graphBuilder(int size) {

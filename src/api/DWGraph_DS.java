@@ -49,7 +49,10 @@ public class DWGraph_DS implements directed_weighted_graph
     @Override
     public void addNode(node_data n)
     {
-        if(!nodeHash.containsKey(n.getKey()))
+        if(n==null)
+            return;
+        if(nodeHash.containsKey(n.getKey()))
+            return;
         nodeHash.put(n.getKey(),n);
         edgeHashOut.put(n.getKey(),new HashMap<Integer,edge_data>());
         edgeHashIn.put(n.getKey(),new HashMap<Integer,Integer>());
