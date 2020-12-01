@@ -26,6 +26,7 @@ class DWGraph_DSTest {
         directed_weighted_graph g = graphBuilder(100);
         for (int i = 0; i < g.nodeSize(); i++) {
             g.connect(0, i, 10);
+            if (i!=0)
             assertEquals(g.getEdge(0, i), new EdgeData(0, i, 10));
         }
     }
