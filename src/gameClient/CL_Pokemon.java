@@ -12,25 +12,20 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 	double dist=Double.MAX_VALUE;
-	private CL_Agent myAgents;
-	synchronized public double getDist()
+	private CL_Agent myAgent;
+	 public double getDist()
 	{
 		return dist;
 	}
-	public boolean noOneLookingForMe()
+
+	 public void setAgent(CL_Agent agent,double dist2)
 	{
-		if(myAgents==null)
-			return true;
-		return false;
-	}
-	synchronized public void setAgent(CL_Agent agent,double dist2)
-	{
-		myAgents= agent;
+		myAgent= agent;
 		dist=dist2;
 	}
-	synchronized   public CL_Agent getMyAgent()
+	   public CL_Agent getMyAgent()
 	{
-		return myAgents;
+		return myAgent;
 	}
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;

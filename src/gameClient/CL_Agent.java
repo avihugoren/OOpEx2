@@ -175,4 +175,16 @@ public class CL_Agent  {
 		public void set_sg_dt(long _sg_dt) {
 			this._sg_dt = _sg_dt;
 		}
-	}
+
+
+
+
+
+//	@Override
+//	public void run(directed_weighted_graph gg,int src) {
+//			{
+//					int nextNode=MyClient.nextNode(gg, src);
+//
+//
+//	}
+}
