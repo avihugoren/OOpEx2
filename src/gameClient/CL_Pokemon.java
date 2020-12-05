@@ -1,4 +1,5 @@
 package gameClient;
+
 import api.edge_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
@@ -10,7 +11,27 @@ public class CL_Pokemon {
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
-	
+	double dist=Double.MAX_VALUE;
+	private CL_Agent myAgents;
+	synchronized public double getDist()
+	{
+		return dist;
+	}
+	public boolean noOneLookingForMe()
+	{
+		if(myAgents==null)
+			return true;
+		return false;
+	}
+	synchronized public void setAgent(CL_Agent agent,double dist2)
+	{
+		myAgents= agent;
+		dist=dist2;
+	}
+	synchronized   public CL_Agent getMyAgent()
+	{
+		return myAgents;
+	}
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
 	//	_speed = s;
@@ -63,4 +84,6 @@ public class CL_Pokemon {
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
 	}
+
+
 }

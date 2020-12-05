@@ -27,7 +27,10 @@ public class GeoLocation implements geo_location {
 
     @Override
     public double distance(geo_location g) {
-        return 0;
+        double xd=Math.pow(2,g.x()-x);
+        double yd=Math.pow(2,g.y()-y);
+        double zd=Math.pow(2,g.z()-z);
+        return Math.pow(2,xd+yd+zd);
     }
     @Override
     public String toString()

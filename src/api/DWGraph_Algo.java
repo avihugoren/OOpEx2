@@ -1,8 +1,8 @@
 package api;
 
-//import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-//import com.sun.tools.jdi.resources.jdi;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -94,7 +94,7 @@ public class DWGraph_Algo implements dw_graph_algorithms
     @Override
     public boolean isConnected() {
         if(myGraph==null)
-            return false;
+            return true;
         if (myGraph.nodeSize() == 0 || myGraph.nodeSize() == 1)
             return true;
         Iterator<node_data> iter1 = myGraph.getV().iterator();

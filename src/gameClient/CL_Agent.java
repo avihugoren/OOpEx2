@@ -7,7 +7,7 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
-public class CL_Agent {
+public class CL_Agent  {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
 		private static int _seed = 3331;
@@ -20,7 +20,16 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-		
+		private CL_Pokemon myPokemon;
+
+	synchronized public void setMyPokemon(CL_Pokemon pokemon)
+		{
+			myPokemon=pokemon;
+		}
+	   synchronized public CL_Pokemon getMyPokemon()
+		{
+			return myPokemon;
+		}
 		private double _value;
 		
 		
