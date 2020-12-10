@@ -1,5 +1,9 @@
 package api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -154,6 +158,7 @@ public class DWGraph_DS implements directed_weighted_graph
         return modeCount;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof DWGraph_DS))
             return false;
@@ -171,13 +176,15 @@ public class DWGraph_DS implements directed_weighted_graph
     @Override
     public String toString()
     {
-        StringBuilder s=new StringBuilder();
-        for (node_data node:nodeHash.values())
-            s.append(node+"\n");
-        for(Integer Inte:edgeHashOut.keySet())
-            for (edge_data edge:getE(Inte))
-                s.append(edge+"\n");
-            return s.toString();
+//        StringBuilder s=new StringBuilder();
+//        for (node_data node:nodeHash.values())
+//            s.append(node+"\n");
+//        for(Integer Inte:edgeHashOut.keySet())
+//            for (edge_data edge:getE(Inte))
+//                s.append(edge+"\n");
+//            return s.toString();
+        Gson gson= new GsonBuilder().registerTypeAdapter(DWGraph_DS.class,new GraphJson()).create();
+       return gson.toJson(this);
 
     }
 }

@@ -4,6 +4,9 @@ import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
 import api.node_data;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
@@ -33,16 +36,73 @@ public class Arena {
 	public Arena() {;
 		_info = new ArrayList<String>();
 	}
-	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
-		_gg = g;
-		this.setAgents(r);
-		this.setPokemons(p);
+//	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
+//		_gg = g;
+//		this.setAgents(r);
+//		this.setPokemons(p);
+//	}
+	public void setPokemons(List<CL_Pokemon> f)
+	{
+		if(_pokemons==null)
+		{
+			this._pokemons = f;
+			System.out.println("set pokemons");
+			return;
+
+		}
+
+		for (int i = 0; i <f.size() ; i++)
+		{
+			for (int j = 0; j <_pokemons.size() ; j++)
+			{
+				if(f.get(i).equals(_pokemons.get(j)))
+				{
+					f.get(i).update(_pokemons.get(j));
+				//	_pokemons.remove(j);
+					break;
+				}
+			}
+		}
+		this._pokemons=f;
 	}
-	public void setPokemons(List<CL_Pokemon> f) {
-		this._pokemons = f;
-	}
-	public void setAgents(List<CL_Agent> f) {
-		this._agents = f;
+	public void setAgents(List<CL_Agent> f,String lg) throws JSONException {
+		if(_agents==null)
+		{
+			this._agents = f;
+			return;
+		}
+		JSONObject line;
+		line = new JSONObject(lg);
+		int id;
+		JSONObject agent;
+		JSONArray jsonArray=line.getJSONArray("Agents");
+		for (int i = 0; i <jsonArray.length(); i++)
+		{
+		  	agent= (JSONObject) jsonArray.get(i);
+		  	JSONObject a=agent.getJSONObject("Agent");
+		  	id=a.getInt("id");
+
+			for (int j = 0; j <_agents.size() ; j++)
+			{
+				if(_agents.get(j).getID()==id)
+				{
+
+					_agents.get(j).update(agent.toString());
+					break;
+			    }
+
+		}
+		}
+
+//		for (int i = 0; i <_agents.size() ; i++) {
+//			for (int j = 0; j <f.size() ; j++) {
+//				if(_agents.get(i).getID()==f.get(j).getID())
+//				{
+//
+//				}
+//			}
+//
+//		}
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
 	private void init( ) {

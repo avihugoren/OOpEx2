@@ -7,6 +7,9 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class CL_Agent  {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
@@ -19,14 +22,37 @@ public class CL_Agent  {
 		private node_data _curr_node;
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
+		public  CL_Pokemon second;
 		private long _sg_dt;
+		public CL_Pokemon old;
+		private List<node_data> myRoute=new LinkedList<>();
+		private int WhereIamOnRoute=1;
 		private CL_Pokemon myPokemon;
 
-	synchronized public void setMyPokemon(CL_Pokemon pokemon)
+		public void fixMe(CL_Agent other)
+		{
+			this._curr_edge=other._curr_edge;
+		}
+		public int giveMeNextNode()
+		{
+			if(myPokemon==null)
+				return -1;
+//			if(getSrcNode()==myPokemon.get_edge().getSrc())
+//				return myPokemon.get_edge().getDest();
+			WhereIamOnRoute++;
+			return myRoute.get(WhereIamOnRoute-1).getKey();
+		}
+		public void SetMyRoute( List<node_data> myRoute)
+		{
+			this.myRoute=myRoute;
+			WhereIamOnRoute=1;
+		}
+
+	 public void setMyPokemon(CL_Pokemon pokemon)
 		{
 			myPokemon=pokemon;
 		}
-	   synchronized public CL_Pokemon getMyPokemon()
+	    public CL_Pokemon getMyPokemon()
 		{
 			return myPokemon;
 		}

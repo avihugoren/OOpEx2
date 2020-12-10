@@ -29,6 +29,7 @@ public class NodeData implements node_data {
 
     @Override
     public void setLocation(geo_location p) {
+        this.geo=p;
 
 
     }

@@ -30,10 +30,12 @@ public class DWGraph_Algo implements dw_graph_algorithms
     }
 
     @Override
-    public directed_weighted_graph copy() {
+    public directed_weighted_graph copy()
+    {
         return new DWGraph_DS(myGraph);
     }
-    private HashMap<Integer, NodeAlgo> Dijkstra(int src) {
+
+     HashMap<Integer, NodeAlgo> Dijkstra(int src) {
         HashMap<Integer, NodeAlgo> nodes = new HashMap<Integer, NodeAlgo>();
         for (node_data node : myGraph.getV())
             nodes.put(node.getKey(), new NodeAlgo(node.getKey(), Double.MAX_VALUE, null));

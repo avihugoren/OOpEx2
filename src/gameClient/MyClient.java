@@ -2,32 +2,42 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class MyClient implements Runnable{
-    private static MyFrame _win;
+    private static MyFrame3 _win;
     private static Arena _ar;
+    private int id ;
+    private int scenario_num;
     ThreadGroup Group=new ThreadGroup("group");
-    public static void main(String[] a) {
-        Thread client = new Thread(new MyClient());
-        client.start();
-
+    public void setId(int id)
+    {
+        this.id=id;
     }
+    public void setScenarioNum(int num)
+    {
+        this. scenario_num=num;
+    }
+
 
     @Override
     public void run() {
-        int scenario_num = 11;
         game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-        int id = 999;
         game.login(id);
         String g = game.getGraph();
         String pks = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+        System.out.println(pks);
+        //  directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+        directed_weighted_graph gg=buildGraphFromJason(game.getGraph());
         init(game);
 
         game.startGame();
@@ -36,9 +46,13 @@ public class MyClient implements Runnable{
         long dt=100;
 
         while(game.isRunning()) {
-            moveAgants(game, gg);
             try {
-                if(ind%3==0) {_win.repaint();}
+                moveAgants(game, gg);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                if(ind%0.5==0) {_win.repaint();}
                 Thread.sleep(dt);
                 ind++;
             }
@@ -58,22 +72,27 @@ public class MyClient implements Runnable{
      * @param gg
      * @param
      */
-    private static void moveAgants(game_service game, directed_weighted_graph gg) {
+    private static void moveAgants(game_service game, directed_weighted_graph gg) throws JSONException {
         String lg = game.move();
         List<CL_Agent> log = Arena.getAgents(lg, gg);
-        _ar.setAgents(log);
+        _ar.setAgents(log,lg);
         //ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
         String fs =  game.getPokemons();
         List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
         _ar.setPokemons(ffs);
-        for(int i=0;i<log.size();i++) {
-            CL_Agent ag = log.get(i);
+        for (int i = 0; i <_ar.getPokemons().size() ; i++)
+        {
+            Arena.updateEdge(_ar.getPokemons().get(i),gg );
+        }
+        for(int i=0;i<_ar.getAgents().size();i++) {
+            CL_Agent ag = _ar.getAgents().get(i);
             int id = ag.getID();
             int dest = ag.getNextNode();
             int src = ag.getSrcNode();
             double v = ag.getValue();
-            if(dest==-1) {
-                dest = nextNode(gg, src, ag);
+            if(dest==-1)
+            {
+                dest = nextNode(gg, src, ag,game);
                 game.chooseNextEdge(ag.getID(), dest);
                 System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
             }
@@ -85,67 +104,135 @@ public class MyClient implements Runnable{
      * @param src
      * @return
      */
-    private static int nextNode(directed_weighted_graph g, int src,CL_Agent Agent)
+    private static int nextNode(directed_weighted_graph g, int src,CL_Agent Agent,game_service game)
     {
 //        CL_Agent Agent = null;
-        double x;
         boolean iknowWhereToGo=false;
-       dw_graph_algorithms algo = new DWGraph_Algo(g);
-//        for (CL_Agent agentIndex : _ar.getAgents())
-//            if (agentIndex.getSrcNode() == src) {
-//                Agent = agentIndex;
-//                break;
+        CL_Pokemon tempPoke=null;
+        dw_graph_algorithms algo = new DWGraph_Algo(g);
+//        if(Agent.getMyPokemon()!=null&&_ar.getPokemons().contains(Agent.getMyPokemon()))
+//            iknowWhereToGo=true;
+//        if(Agent.getMyPokemon()==null&&_ar.getPokemons().contains(Agent.second)&&!iknowWhereToGo )
+//            if(Agent.second!=null)
+//            {
+//                Agent.setMyPokemon(Agent.second);
+//                Agent.getMyPokemon().setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
+//                tempPoke=returnClosetPokemon(_ar.getPokemons(),Agent.getMyPokemon(),algo);
+//                if(tempPoke!=null)
+//                {
+//                    Agent.second=tempPoke;
+//                    tempPoke.setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),tempPoke.get_edge().getSrc()));
+//                }
+//
+////                Agent.SetMyRoute(algo.shortestPath(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
+//             //   Agent.getMyPokemon().setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
+//
+//                iknowWhereToGo=true;
 //            }
 
-        if(_ar.getPokemons().contains(Agent.getMyPokemon()))
-            iknowWhereToGo=true;
-
-        if (Agent.getMyPokemon()!=null&&Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
-            return Agent.getMyPokemon().get_edge().getDest();
+//        if (Agent.getMyPokemon()!=null&&Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
+//            return Agent.getMyPokemon().get_edge().getDest();
         if(!iknowWhereToGo)
         {
             double dist;
             double temp = Double.MAX_VALUE;
             for (CL_Pokemon pokemon : _ar.getPokemons())
             {
-                Arena.updateEdge(pokemon, g);
-                dist = algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc());
-                if (dist < temp && dist != -1 && dist < pokemon.getDist()) {
-                    temp = dist;
-                    Agent.setMyPokemon(pokemon);
+                {
+                    Arena.updateEdge(pokemon, g);
+                    dist = algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc());
+                    if ( dist < temp && dist != -1&&dist<pokemon.getDist())
+                    {
+                        temp = dist;
+                        Agent.setMyPokemon(pokemon);
+                    }
                 }
             }
             if (Agent.getMyPokemon() != null)
             {
-                if (Agent.getMyPokemon().getMyAgent() != null&&Agent.getMyPokemon().getMyAgent()!=Agent)
+                if(Agent.getMyPokemon()!=Agent.old&&Agent.old!=null) {
+                    Agent.old.setDist(Double.MAX_VALUE);
+                    Agent.old=Agent.getMyPokemon();
+                }
+                if (Agent.getMyPokemon().getMyAgent() != null && Agent.getMyPokemon().getMyAgent() != Agent)
+                {
                     Agent.getMyPokemon().getMyAgent().setMyPokemon(null);
+                }
                 Agent.getMyPokemon().setAgent(Agent, temp);
-            }
-        }
+                tempPoke=returnClosetPokemon(_ar.getPokemons(),Agent.getMyPokemon(),algo);
+                if (tempPoke!=null)
+                {
+                    dist=algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc())+algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(),tempPoke.get_edge().getSrc());
+                    if(dist<tempPoke.dist)
+                    {
+//                        if(tempPoke.getMyAgent()!=null)
+//                            tempPoke.getMyAgent().setMyPokemon(null);
+//
+                        tempPoke.setDist(dist);
+                        if(tempPoke.getMyAgent()!=null)
+                            tempPoke.getMyAgent().setMyPokemon(null);
+//                        Agent.second=tempPoke;
+                    }
 
-        if (Agent.getMyPokemon()!=null&&Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
-            return Agent.getMyPokemon().get_edge().getDest();
-        List<node_data> path = algo.shortestPath(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc());
-        if (path != null&&!path.isEmpty())
-            return path.get(1).getKey();
+                }
+
+            }
+
+
+            if (Agent.getMyPokemon() != null && Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
+            {
+                int dest=Agent.getMyPokemon().get_edge().getDest();
+                Agent.setMyPokemon(null);
+                return dest;
+            }
+            if (Agent.getMyPokemon()!=null)
+            {
+//                Arena.updateEdge(Agent.getMyPokemon(), g);
+                List<node_data> path = algo.shortestPath(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc());
+                Agent.getMyPokemon().setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
+                if(Agent.second!=null)
+                    Agent.second.setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.second.get_edge().getSrc()));
+                return path.get(1).getKey();
+            }
+            System.out.println("debug");
+            return -1;
+        }
+//        if(Agent.getMyPokemon().get_edge().getSrc()==Agent.getSrcNode())
+//        {
+//            int dest =Agent.getMyPokemon().get_edge().getDest();
+//            Agent.setMyPokemon(null);
+//            return dest;
+//        }
+//
+//        List<node_data>list=algo.shortestPath(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc());
+//        Agent.getMyPokemon().setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
+//        if(list.size()>1)
+//        return list.get(1).getKey();
+//        return -1;
+////        if (path != null&&!path.isEmpty())
+////            return path.get(1).getKey();
         return -1;
 
 
     }
+
     private void init(game_service game) {
         String g = game.getGraph();
         String fs = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+
+        directed_weighted_graph gg = buildGraphFromJason(game.getGraph());
+        //  directed_weighted_graph gg=game.getJava_Graph_Not_to_be_used();
         //gg.init(g);
         _ar = new Arena();
         _ar.setGraph(gg);
         _ar.setPokemons(Arena.json2Pokemons(fs));
-        _win = new MyFrame("test Ex2");
+        _win = new MyFrame3("test Ex2",_ar);
         _win.setSize(1000, 700);
-        _win.update(_ar);
+        //  _win.update(_ar);
 
 
         _win.show();
+        _win.setVisible(true);
         String info = game.toString();
         JSONObject line;
         try {
@@ -156,16 +243,75 @@ public class MyClient implements Runnable{
             System.out.println(game.getPokemons());
             int src_node = 0;  // arbitrary node, you should start at one of the pokemon
             ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-            for(int a = 0;a<cl_fs.size();a++) { Arena.updateEdge(cl_fs.get(a),gg);}
-            for(int a = 0;a<rs;a++) {
-                int ind = a%cl_fs.size();
-                CL_Pokemon c = cl_fs.get(ind);
-                int nn = c.get_edge().getDest();
-                if(c.getType()<0 ) {nn = c.get_edge().getSrc();}
-
-                game.addAgent(nn);
+            for(int a = 0;a<cl_fs.size();a++)
+            {
+                Arena.updateEdge(cl_fs.get(a),gg);
             }
+            int src=0;
+//            for (node_data node : gg.getV()) {
+//                src = node.getKey();
+//                break;
+//            }
+//            Dijkstra dijkstra=new Dijkstra(gg);
+//            HashMap<Integer, NodeAlgo> helpHash=dijkstra.Dijkstra(src);
+//            List<CL_Agent> agents=_ar.getAgents();
+            List<CL_Pokemon>pokemonList=_ar.getPokemons();
+            PriorityQueue<CL_Pokemon>pq=new PriorityQueue<>();
+            for (int i = 0; i <pokemonList.size() ; i++)
+            {
+                pq.add(pokemonList.get(i));
+            }
+            for (int i = 0; i <rs ; i++)
+            {
+                if(pq.peek()!=null)
+                {
+                    Arena.updateEdge(pq.peek(), gg);
+                    game.addAgent(pq.poll().get_edge().getSrc());
+                }
+                else
+                    game.addAgent(i);
+            }
+
+//            for(int a = 0;a<rs;a++) {
+//                int ind = a%cl_fs.size();
+//                CL_Pokemon c = cl_fs.get(ind);
+//                int nn = c.get_edge().getDest();
+//                if(c.getType()<0 )
+//                {
+//                    nn = c.get_edge().getSrc();
+//                }
+//
+//                game.addAgent(5);
+//            }
+//            game.addAgent(12);
+//            game.addAgent(5);
+//            game.addAgent(0);
         }
         catch (JSONException e) {e.printStackTrace();}
+    }
+    public directed_weighted_graph buildGraphFromJason(String g)
+    {
+        GsonBuilder builder=new GsonBuilder();
+        builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJson());
+        Gson json = builder.create();
+        directed_weighted_graph graph= json.fromJson(g,directed_weighted_graph.class);
+        return graph;
+    }
+    public static CL_Pokemon returnClosetPokemon(List<CL_Pokemon> list, CL_Pokemon pokemon, dw_graph_algorithms algo)
+    {
+        double temp= Double.MAX_VALUE;
+        double dist;
+        CL_Pokemon tempPoke=null;
+        for (int i = 0; i <list.size() ; i++) {
+            if(list.get(i)!=pokemon&&list.get(i).youShouldSerchMe==null&&list.get(i).getMyAgent()==null)
+            {
+                dist=algo.shortestPathDist(pokemon.get_edge().getSrc(),list.get(i).get_edge().getSrc());
+                if(dist<temp&&dist!=-1) {
+                    temp = dist;
+                    tempPoke = list.get(i);
+                }
+            }
+        }
+        return tempPoke;
     }
 }

@@ -27,10 +27,19 @@ public class GeoLocation implements geo_location {
 
     @Override
     public double distance(geo_location g) {
-        double xd=Math.pow(2,g.x()-x);
-        double yd=Math.pow(2,g.y()-y);
-        double zd=Math.pow(2,g.z()-z);
-        return Math.pow(2,xd+yd+zd);
+        double xd=Math.pow(g.x()-x,2);
+        double yd=Math.pow(g.y()-y,2);
+        double zd=Math.pow(g.z()-z,2);
+        return Math.pow(xd+yd+zd,1/2.0);
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GeoLocation))
+            return false;
+        GeoLocation g = (GeoLocation) o;
+        if (g.x() != this.x() || g.y() != this.y()||g.z()!=this.z())
+            return false;
+        return true;
     }
     @Override
     public String toString()
