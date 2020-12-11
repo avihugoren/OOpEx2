@@ -46,7 +46,6 @@ public class Arena {
 		if(_pokemons==null)
 		{
 			this._pokemons = f;
-			System.out.println("set pokemons");
 			return;
 
 		}

@@ -16,6 +16,8 @@ import java.util.PriorityQueue;
 public class MyClient implements Runnable{
     private static MyFrame3 _win;
     private static Arena _ar;
+    private static boolean doubleTactic=false;
+
     private int id ;
     private int scenario_num;
     ThreadGroup Group=new ThreadGroup("group");
@@ -148,34 +150,32 @@ public class MyClient implements Runnable{
                     }
                 }
             }
-            if (Agent.getMyPokemon() != null)
-            {
-                if(Agent.getMyPokemon()!=Agent.old&&Agent.old!=null) {
+            if (Agent.getMyPokemon() != null) {
+                if (Agent.getMyPokemon() != Agent.old && Agent.old != null) {
                     Agent.old.setDist(Double.MAX_VALUE);
-                    Agent.old=Agent.getMyPokemon();
+                    Agent.old = Agent.getMyPokemon();
                 }
-                if (Agent.getMyPokemon().getMyAgent() != null && Agent.getMyPokemon().getMyAgent() != Agent)
-                {
+                if (Agent.getMyPokemon().getMyAgent() != null && Agent.getMyPokemon().getMyAgent() != Agent) {
                     Agent.getMyPokemon().getMyAgent().setMyPokemon(null);
                 }
                 Agent.getMyPokemon().setAgent(Agent, temp);
-                tempPoke=returnClosetPokemon(_ar.getPokemons(),Agent.getMyPokemon(),algo);
-                if (tempPoke!=null)
-                {
-                    dist=algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc())+algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(),tempPoke.get_edge().getSrc());
-                    if(dist<tempPoke.dist)
-                    {
+                if (doubleTactic) {
+                    tempPoke = returnClosetPokemon(_ar.getPokemons(), Agent.getMyPokemon(), algo);
+                    if (tempPoke != null) {
+                        dist = algo.shortestPathDist(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc()) + algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(), tempPoke.get_edge().getSrc());
+                        if (dist < tempPoke.dist) {
 //                        if(tempPoke.getMyAgent()!=null)
 //                            tempPoke.getMyAgent().setMyPokemon(null);
 //
-                        tempPoke.setDist(dist);
-                        if(tempPoke.getMyAgent()!=null)
-                            tempPoke.getMyAgent().setMyPokemon(null);
+                            tempPoke.setDist(dist);
+                            if (tempPoke.getMyAgent() != null)
+                                tempPoke.getMyAgent().setMyPokemon(null);
 //                        Agent.second=tempPoke;
+                        }
+
                     }
 
                 }
-
             }
 
 
@@ -219,6 +219,7 @@ public class MyClient implements Runnable{
     private void init(game_service game) {
         String g = game.getGraph();
         String fs = game.getPokemons();
+        boolean doubleTactic=false;
 
         directed_weighted_graph gg = buildGraphFromJason(game.getGraph());
         //  directed_weighted_graph gg=game.getJava_Graph_Not_to_be_used();
@@ -247,16 +248,11 @@ public class MyClient implements Runnable{
             {
                 Arena.updateEdge(cl_fs.get(a),gg);
             }
-            int src=0;
-//            for (node_data node : gg.getV()) {
-//                src = node.getKey();
-//                break;
-//            }
-//            Dijkstra dijkstra=new Dijkstra(gg);
-//            HashMap<Integer, NodeAlgo> helpHash=dijkstra.Dijkstra(src);
-//            List<CL_Agent> agents=_ar.getAgents();
             List<CL_Pokemon>pokemonList=_ar.getPokemons();
             PriorityQueue<CL_Pokemon>pq=new PriorityQueue<>();
+            if(pokemonList.size()>=rs*2)
+                doubleTactic=true;
+
             for (int i = 0; i <pokemonList.size() ; i++)
             {
                 pq.add(pokemonList.get(i));
@@ -272,20 +268,6 @@ public class MyClient implements Runnable{
                     game.addAgent(i);
             }
 
-//            for(int a = 0;a<rs;a++) {
-//                int ind = a%cl_fs.size();
-//                CL_Pokemon c = cl_fs.get(ind);
-//                int nn = c.get_edge().getDest();
-//                if(c.getType()<0 )
-//                {
-//                    nn = c.get_edge().getSrc();
-//                }
-//
-//                game.addAgent(5);
-//            }
-//            game.addAgent(12);
-//            game.addAgent(5);
-//            game.addAgent(0);
         }
         catch (JSONException e) {e.printStackTrace();}
     }

@@ -17,7 +17,7 @@ public class main {
             }
         } else {
             id=999;
-            scenario_num=11;
+            scenario_num=1;
             System.out.println("noaaaaaa");
         }
         n.setId(id);
