@@ -34,7 +34,7 @@ public class MyClient implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-        game.login(id);
+        game.login(999);
         String g = game.getGraph();
         String pks = game.getPokemons();
         System.out.println(pks);
@@ -45,7 +45,7 @@ public class MyClient implements Runnable{
         game.startGame();
         _win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
         int ind=0;
-        long dt=100;
+        long dt=70;
 
         while(game.isRunning()) {
             try {
@@ -142,7 +142,7 @@ public class MyClient implements Runnable{
             {
                 {
                     Arena.updateEdge(pokemon, g);
-                    dist = algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc());
+                    dist = (algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc()))/Agent.getSpeed();
                     if ( dist < temp && dist != -1&&dist<pokemon.getDist())
                     {
                         temp = dist;
@@ -151,7 +151,7 @@ public class MyClient implements Runnable{
                 }
             }
             if (Agent.getMyPokemon() != null) {
-                if (Agent.getMyPokemon() != Agent.old && Agent.old != null) {
+                if (Agent.old != null &&!Agent.getMyPokemon().equals(Agent.old) ) {
                     Agent.old.setDist(Double.MAX_VALUE);
                     Agent.old = Agent.getMyPokemon();
                 }
@@ -162,7 +162,7 @@ public class MyClient implements Runnable{
                 if (doubleTactic) {
                     tempPoke = returnClosetPokemon(_ar.getPokemons(), Agent.getMyPokemon(), algo);
                     if (tempPoke != null) {
-                        dist = algo.shortestPathDist(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc()) + algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(), tempPoke.get_edge().getSrc());
+                        dist = (algo.shortestPathDist(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc()) + algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(), tempPoke.get_edge().getSrc()))/Agent.getSpeed();
                         if (dist < tempPoke.dist) {
 //                        if(tempPoke.getMyAgent()!=null)
 //                            tempPoke.getMyAgent().setMyPokemon(null);
@@ -189,9 +189,9 @@ public class MyClient implements Runnable{
             {
 //                Arena.updateEdge(Agent.getMyPokemon(), g);
                 List<node_data> path = algo.shortestPath(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc());
-                Agent.getMyPokemon().setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()));
-                if(Agent.second!=null)
-                    Agent.second.setAgent(Agent,algo.shortestPathDist(Agent.getSrcNode(),Agent.second.get_edge().getSrc()));
+//                Agent.getMyPokemon().setAgent(Agent,(algo.shortestPathDist(Agent.getSrcNode(),Agent.getMyPokemon().get_edge().getSrc()))/Agent.getSpeed());
+//                if(doubleTactic&&Agent.second!=null)
+//                    Agent.second.setAgent(Agent,(algo.shortestPathDist(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc()) + algo.shortestPathDist(Agent.getMyPokemon().get_edge().getSrc(), tempPoke.get_edge().getSrc()))/Agent.getSpeed());
                 return path.get(1).getKey();
             }
             System.out.println("debug");
@@ -259,7 +259,7 @@ public class MyClient implements Runnable{
             }
             for (int i = 0; i <rs ; i++)
             {
-                if(pq.peek()!=null)
+                if(pq.peek()!=null&&!pq.isEmpty())
                 {
                     Arena.updateEdge(pq.peek(), gg);
                     game.addAgent(pq.poll().get_edge().getSrc());
