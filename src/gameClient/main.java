@@ -13,7 +13,7 @@ public class main {
                 scenario_num = Integer.parseInt(a[1]);
             } catch (NumberFormatException e) {
                 id=999;
-                scenario_num=0;
+                scenario_num=14;
             }
         } else {
             id=999;

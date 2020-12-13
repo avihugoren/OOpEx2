@@ -28,6 +28,16 @@ public class CL_Agent  {
 		private List<node_data> myRoute=new LinkedList<>();
 		private int WhereIamOnRoute=1;
 		private CL_Pokemon myPokemon;
+		private int calculatedNextNode;
+
+		public void setCalculatedNextNode(int node)
+		{
+			calculatedNextNode=node;
+		}
+		public int getCalculatedNextNode()
+		{
+			return calculatedNextNode;
+		}
 
 		public void fixMe(CL_Agent other)
 		{
