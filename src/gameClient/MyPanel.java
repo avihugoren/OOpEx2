@@ -22,10 +22,12 @@ public class MyPanel  extends JPanel {
 
     private Arena _ar;
     private gameClient.util.Range2Range _w2f;
+
     public MyPanel(Arena ar)
     {
         super();
-        this.setBackground(new Color(91, 102, 203));
+       /// Image im=getToolkit().getImage("unnamed.jpg/pokemon.png");
+        this.setBackground(new Color(141, 142, 146));
         this._ar=ar;
         updateFrame();
     }
@@ -50,7 +52,9 @@ public class MyPanel  extends JPanel {
         _w2f = Arena.w2f(g,frame);
     }
 
-    protected void paintComponent(Graphics g) {
+
+   // protected void paintComponent(Graphics g) {
+   protected void paintComponent(Graphics g) {
         int w = this.getWidth();
         int h = this.getHeight();
         g.clearRect(0, 0, w, h);
@@ -59,15 +63,37 @@ public class MyPanel  extends JPanel {
 //        int w = this.getWidth();
 //        int h = this.getHeight();
 //        g.clearRect(0, 0, w, h);
-    	updateFrame();
+    	//updateFrame();
         drawTitle(g);
+       drawBack(g);
         //drawImage(g);
         drawGraph(g);
         drawPokemons(g);
         drawAgants(g);
+
+       // drawTimer(g);
 //        drawInfo(g);
    }
-//    private void drawInfo(Graphics g) {
+
+    private void drawBack(Graphics g) {
+//        Image im=new ImageIcon("resources/back.png").getImage();
+//        g.drawImage(im,this.getWidth()/8,this.getHeight()/2-105,null);
+        Image im1=new ImageIcon("resources/pikachu.png").getImage();
+        g.drawImage(im1,(this.getWidth()/8)*6,this.getHeight()/3*2,null);
+//        Image im2=new ImageIcon("resources/bal.png").getImage();
+//        g.drawImage(im2,this.getWidth()/8*4,this.getHeight()/3*2,null);
+//        Image im3=new ImageIcon("resources/pok.png").getImage();
+//        g.drawImage(im3,this.getWidth()/8*2,this.getHeight()/3*2,null);
+    }
+
+
+//    private void drawTimer(Graphics g) {
+//        g.setColor(Color.BLACK);
+//        g.setFont(new Font("ARIEL",Font.BOLD,24));
+//        g.drawString("time to end: "+timeToEnd,20,20);
+//    }
+
+    //    private void drawInfo(Graphics g) {
 //        java.util.List<String> str = _ar.get_info();
 //        String dt = "none";
 //        for(int i=0;i<str.size();i++) {
@@ -77,7 +103,7 @@ public class MyPanel  extends JPanel {
 //    }
     private void drawTitle(Graphics g)  {
 
-        Image im=getToolkit().getImage("resources/pokemon.png");
+        Image im=getToolkit().getImage("resources/pokemon1.png");
         g.drawImage(im,(int)(this.getWidth()/2-300),0,null);
 
 
@@ -107,23 +133,20 @@ public class MyPanel  extends JPanel {
 
                 CL_Pokemon f = itr.next();
                 Point3D c = f.getLocation();
+
                 int r=10;
-                g.setColor(Color.green);
-                if(f.getType()<0) {g.setColor(Color.orange);}
+                Image im1=new ImageIcon("resources/bal.png").getImage();
+                if(f.getType()<0) {im1=new ImageIcon("resources/pokemon1.gif").getImage(); }
                 if(c!=null) {
-                    Image im1=getToolkit().getImage("resources/PokeBall.png");
+                    //im1=getToolkit().getImage("resources/bal.png");
                     geo_location fp = this._w2f.world2frame(c);
-                    g.drawImage(im1,(int)fp.x()-27/2,(int)fp.y()-27/2,null);
+                    g.drawImage(im1,(int)fp.x()-27/2,(int)fp.y()-24/2,null);
                     // g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-                    g.setColor(Color.orange);
+//                    g.setColor(Color.orange);
                     if(f.getMyAgent()!=null)
                         g.drawString(""+f.getMyAgent().getID(), (int)fp.x()-27/2,(int)fp.y()-27/2);
-                    if(f.youShouldSerchMe!=null)
-                        g.drawString(""+f.youShouldSerchMe.getID(), (int)fp.x()-27/2,(int)fp.y()-27/2);
                     g.setColor(Color.red);
                     g.drawString(""+f.getValue(),(int)fp.x()-27/2+10,(int)fp.y()-27/2);
-                    if(f.youShouldSerchMe!=null)
-                        g.drawString(""+f.youShouldSerchMe.getID(), (int)fp.x()-27/2+20,(int)fp.y()-27/2+20);
                 }
             }
         }
@@ -135,7 +158,6 @@ public class MyPanel  extends JPanel {
         int i=0;
         while(rs!=null && i<rs.size()) {
             geo_location c = rs.get(i).getLocation();
-            int r=8;
             i++;
             if(c!=null) {
                 Image im1=getToolkit().getImage("resources/hash.gif");
@@ -161,7 +183,9 @@ public class MyPanel  extends JPanel {
         geo_location d = gg.getNode(e.getDest()).getLocation();
         geo_location s0 = this._w2f.world2frame(s);
         geo_location d0 = this._w2f.world2frame(d);
-        g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
+        Graphics2D g1=(Graphics2D)g;
+        g1.setStroke(new BasicStroke(2));
+        g1.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
       //  g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 }

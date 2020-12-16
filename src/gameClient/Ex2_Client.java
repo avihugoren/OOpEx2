@@ -77,7 +77,8 @@
 //			int dest = ag.getNextNode();
 //			int src = ag.getSrcNode();
 //			double v = ag.getValue();
-//			if(dest==-1) {
+//			if(dest==-1)
+//			{
 //				dest = nextNode(gg, src);
 //				game.chooseNextEdge(ag.getID(), dest);
 //				System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);

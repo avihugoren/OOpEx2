@@ -14,7 +14,7 @@ public class panelTimer extends JPanel {
 
         super();
         this.game=game;
-        this.setBackground(new Color(91, 102, 203));
+        this.setBackground(new Color(141, 142, 146));
     }
     public void paint(Graphics g) {
         int w = this.getWidth();
@@ -27,5 +27,6 @@ public class panelTimer extends JPanel {
         g.setColor(Color.ORANGE);
         g.setFont(new Font("ARIEL", Font.BOLD, 18));
         g.drawString("time to end: " + timeToEnd / 1000.0, 20, 20);
+
     }
 }

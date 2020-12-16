@@ -16,9 +16,8 @@ import java.util.PriorityQueue;
 public class MyClient implements Runnable{
     private static MyFrame3 _win;
     private static Arena _ar;
-    private static boolean doubleTactic=false;
     double gameTime;
-    double timeToEnd;
+
 
     private int id ;
     private int scenario_num;
@@ -36,7 +35,7 @@ public class MyClient implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-        game.login(999);
+        game.login(314774159);
         String g = game.getGraph();
         String pks = game.getPokemons();
         System.out.println(pks);
@@ -49,12 +48,12 @@ public class MyClient implements Runnable{
         _win.myPanel.add(p);
         _win.setVisible(true);
         gameTime=game.timeToEnd();
-        timeToEnd=game.timeToEnd();
 
-        _win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
+        _win.setTitle("(Noa and Avihu solution) "+game.toString());
         int ind=0;
-        long dt=140;
+        long dt=150;
 
+        //split the game to 3 parts by time each part have diffrent sleep time of the threads start with high time and goes lower over time
         while(game.isRunning()) {
             try {
                 moveAgants(game, gg);
@@ -62,9 +61,11 @@ public class MyClient implements Runnable{
                 e.printStackTrace();
             }
             try {
-                if(ind%0.5==0) {_win.repaint();}
-                if(game.timeToEnd()<gameTime*(2.0/3.5))
-                    dt=81;
+                if(ind%1==0) {_win.repaint();}
+                if(game.timeToEnd()<gameTime*(2.0/3.0))
+                    dt=110;
+                if(game.timeToEnd()<gameTime*(1.0/3.0))
+                    dt=70;
                 Thread.sleep(dt);
                 ind++;
             }
@@ -85,41 +86,36 @@ public class MyClient implements Runnable{
      * @param
      */
     private static void moveAgants(game_service game, directed_weighted_graph gg) throws JSONException {
-        String lg = game.move();
-        List<CL_Agent> log = Arena.getAgents(lg, gg);
-        _ar.setAgents(log,lg);
-        //ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
-        String fs =  game.getPokemons();
-        List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-        _ar.setPokemons(ffs);
+        String gameString = game.move();
+        List<CL_Agent> agentList = Arena.getAgents(gameString, gg);
+        _ar.setAgents(agentList,gameString);
+
+        String pokemonsString =  game.getPokemons();
+        List<CL_Pokemon> pokemonList = Arena.json2Pokemons(pokemonsString);
+        _ar.setPokemons(pokemonList);
+        //for loop that update all the edges of the pokemons
         for (int i = 0; i <_ar.getPokemons().size() ; i++)
-        {
-            Arena.updateEdge(_ar.getPokemons().get(i),gg );
-        }
+            Arena.updateEdge(_ar.getPokemons().get(i), gg);
+        //for loop that calculate the next node for each agent and save it inside the agent
         for(int i=0;i<_ar.getAgents().size();i++)
         {
-            CL_Agent ag = _ar.getAgents().get(i);
-//            int id = ag.getID();
-            int dest = ag.getNextNode();
-            int src = ag.getSrcNode();
-//            double v = ag.getValue();
-            if(dest==-1)
-            {
-                ag.setCalculatedNextNode(nextNode(gg, src, ag,game));
-//                game.chooseNextEdge(ag.getID(), dest);
-//                System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
-            }
+            CL_Agent agent = _ar.getAgents().get(i);
+            int dest = agent.getNextNode();
+            if(dest==-1)//if its -1 it means that the agent is not moving right now
+                agent.setCalculatedNextNode(nextNode(gg,agent));
         }
 
 
-        boolean b=true;
-        for (int i = 0; i <_ar.getAgents().size()&&b ; i++)
+        boolean keepChecking=true;
+        //for loop that check for each node if it had pokemon that he goes towards if not calculate next node again
+        for (int i = 0; i < _ar.getAgents().size()&&keepChecking ; i++)
             for (int j = 0; j < _ar.getAgents().size(); j++)
             {
-                b = false;
-                if (_ar.getAgents().get(i).getMyPokemon() == null && _ar.getAgents().get(i).getNextNode() == -1) {
-                    _ar.getAgents().get(i).setCalculatedNextNode(nextNode(gg, 0, _ar.getAgents().get(i), game));
-                    b = true;
+                keepChecking = false;
+                if (_ar.getAgents().get(j).getMyPokemon() == null )//no going towards any pokemon so calculate again this can happen when other agent is closer to the pokemon
+                {
+                    _ar.getAgents().get(j).setCalculatedNextNode(nextNode(gg, _ar.getAgents().get(j)));
+                    keepChecking = true;//need to check again (if this agent steal other agent pokemon)
                 }
 
             }
@@ -128,18 +124,16 @@ public class MyClient implements Runnable{
 
         for(int i=0;i<_ar.getAgents().size();i++)
         {
-            CL_Agent ag = _ar.getAgents().get(i);
-            int id = ag.getID();
-            int dest = ag.getNextNode();
-            int src = ag.getSrcNode();
-            double v = ag.getValue();
-            if(dest==-1)
+            CL_Agent agent = _ar.getAgents().get(i);
+            int id = agent.getID();
+            int dest = agent.getNextNode();
+            double v = agent.getValue();
+            if(dest == -1)//this agent can move now
             {
-//                ag.setCalculatedNextNode(nextNode(gg, src, ag,game));
-                if(ag.getCalculatedNextNode()!=-1)
+                if(agent.getCalculatedNextNode() != -1)//if its -1 means that this agent dont have pokemon to go towards so no need to move him
                 {
-                    game.chooseNextEdge(ag.getID(), ag.getCalculatedNextNode());
-                    System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + ag.getCalculatedNextNode());
+                    game.chooseNextEdge(agent.getID(), agent.getCalculatedNextNode());
+                    System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + agent.getCalculatedNextNode());
                 }
             }
         }
@@ -147,50 +141,74 @@ public class MyClient implements Runnable{
     /**
      * a very simple random walk implementation!
      * @param g
-     * @param src
      * @return
      */
-    private static int nextNode(directed_weighted_graph g, int src,CL_Agent Agent,game_service game)
+    private static int nextNode(directed_weighted_graph g,CL_Agent Agent)
     {
 
         dw_graph_algorithms algo = new DWGraph_Algo(g);
 
+
+        //if this agent is already on the right edge just need to move to dest to eat the pokemon
+        if (Agent.getMyPokemon() != null && Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
+        {
+            int dest=Agent.getMyPokemon().get_edge().getDest();
+            Agent.getMyPokemon().setAgent(null,Double.MAX_VALUE);
+            return dest;
+        }
             double dist;
             double temp = Double.MAX_VALUE;
+            //for loop that calculate the distance of this agent from all the pokemons and save inside the agent the closets pokemon that is not taken by other agent
             for (CL_Pokemon pokemon : _ar.getPokemons())
             {
-                {
-                    Arena.updateEdge(pokemon, g);
+//                    Arena.updateEdge(pokemon, g);
                     dist = (algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc()))/Agent.getSpeed();
-                    if ( dist < temp && dist != -1&&dist<pokemon.getDist())
+                    //if the current pokemon is closer to the agent and also there no other agent that is closest to the pokemon
+                    if ( dist < temp && dist != -1 && dist < pokemon.getDist())
                     {
-                        temp = dist;
-                        Agent.setMyPokemon(pokemon);
+                        temp = dist;//update the the minimum distance
+                        Agent.setMyPokemon(pokemon);//set this pokemon in the agent
                     }
-                }
             }
-            if (Agent.getMyPokemon() != null) {
-                if (Agent.old != null &&!Agent.getMyPokemon().equals(Agent.old) ) {
-                    Agent.old.setDist(temp+ algo.shortestPathDist(Agent.getMyPokemon().get_edge().getDest(),Agent.old.get_edge().getSrc()));
-                    Agent.old = Agent.getMyPokemon();
-                }
-                if (Agent.getMyPokemon().getMyAgent() != null && Agent.getMyPokemon().getMyAgent() != Agent) {
+            //if the agent successfully found a pokemon
+            if (Agent.getMyPokemon() != null)
+            {
+                //if this pokemon already have an agent that going towards him set this agent pokemon to null (because this agent is closer)
+                if(Agent.getMyPokemon().getMyAgent() != null&&Agent.getMyPokemon().getMyAgent().getID() != Agent.getID())
+                {
+                    Agent.getMyPokemon().getMyAgent().setOld(null);
                     Agent.getMyPokemon().getMyAgent().setMyPokemon(null);
                 }
-                Agent.getMyPokemon().setAgent(Agent, temp);
+                //if the old pokemon of this agent is different then the new one i want to put the old pokemon distance to infinity (so agents can go to him)
+                if (Agent.getOld() != null &&!Agent.getMyPokemon().equals(Agent.getOld()))
+                {
+                    Agent.getOld().setAgent(null, Double.MAX_VALUE);
+                }
+
+                Agent.getMyPokemon().setAgent(Agent, temp);//tells the pokemon that this agent coming towards him and update the distance
+                Agent.setOld(Agent.getMyPokemon());//update old to the new pokemon
+
             }
+            //if this agent is already on this pokemon edge so just need to go towards dest
             if (Agent.getMyPokemon() != null && Agent.getSrcNode() == Agent.getMyPokemon().get_edge().getSrc())
             {
-                int dest=Agent.getMyPokemon().get_edge().getDest();
+                int dest = Agent.getMyPokemon().get_edge().getDest();
+                Agent.getMyPokemon().setAgent(null,Double.MAX_VALUE);//if for some reason the pokemon will not be eaten update its distance
                 return dest;
             }
-            if (Agent.getMyPokemon()!=null)
+            //if this agent have pokemon so just move towards him on the shortest path
+            if (Agent.getMyPokemon() != null)
             {
                 List<node_data> path = algo.shortestPath(Agent.getSrcNode(), Agent.getMyPokemon().get_edge().getSrc());
 
                 return path.get(1).getKey();
             }
-            System.out.println("debug");
+
+            //if this agent didnt find any pokemon so return  so check if its inside one of the pokemons
+        for (CL_Pokemon pokemon : _ar.getPokemons())
+            if(pokemon.getMyAgent().getID() == Agent.getID())
+            return algo.shortestPath(Agent.getSrcNode(),pokemon.get_edge().getSrc()).get(1).getKey();
+            //didnt find pokemon return -1
             return -1;
 
 
@@ -200,11 +218,8 @@ public class MyClient implements Runnable{
     private void init(game_service game) {
         String g = game.getGraph();
         String fs = game.getPokemons();
-        this.doubleTactic=false;
 
-        directed_weighted_graph gg = buildGraphFromJason(game.getGraph());
-        //  directed_weighted_graph gg=game.getJava_Graph_Not_to_be_used();
-        //gg.init(g);
+        directed_weighted_graph gg = buildGraphFromJason(g);
         _ar = new Arena();
         _ar.setGraph(gg);
         _ar.setPokemons(Arena.json2Pokemons(fs));
@@ -220,61 +235,40 @@ public class MyClient implements Runnable{
         try {
             line = new JSONObject(info);
             JSONObject ttt = line.getJSONObject("GameServer");
-            int rs = ttt.getInt("agents");
+            int numberOfAgents = ttt.getInt("agents");
             System.out.println(info);
             System.out.println(game.getPokemons());
-            int src_node = 0;  // arbitrary node, you should start at one of the pokemon
             ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
             for(int a = 0;a<cl_fs.size();a++)
-            {
-                Arena.updateEdge(cl_fs.get(a),gg);
-            }
+                Arena.updateEdge(cl_fs.get(a), gg);
             List<CL_Pokemon>pokemonList=_ar.getPokemons();
             PriorityQueue<CL_Pokemon>pq=new PriorityQueue<>();
-//            if(pokemonList.size()>=rs*2)
-//               this.doubleTactic=true;
-
-            for (int i = 0; i <pokemonList.size() ; i++)
+            //add all the pokemons to a PQ order by value (the first to go out is the highest)
+            for (int i = 0; i < pokemonList.size() ; i++)
             {
                 pq.add(pokemonList.get(i));
             }
-            for (int i = 0; i <rs ; i++)
+            //put the agents near the pokemons with the high values
+            for (int i = 0; i < numberOfAgents ; i++)
             {
-                if(pq.peek()!=null&&!pq.isEmpty())
+                if(pq.peek() != null && !pq.isEmpty())
                 {
                     Arena.updateEdge(pq.peek(), gg);
                     game.addAgent(pq.poll().get_edge().getSrc());
                 }
-                else
+                else//if the PQ is empty put the on the index
                     game.addAgent(i);
             }
 
         }
         catch (JSONException e) {e.printStackTrace();}
     }
-    public directed_weighted_graph buildGraphFromJason(String g)
+    public directed_weighted_graph buildGraphFromJason(String g)//function that get build graph from a json that received from the server
     {
         GsonBuilder builder=new GsonBuilder();
         builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJson());
         Gson json = builder.create();
         directed_weighted_graph graph= json.fromJson(g,directed_weighted_graph.class);
         return graph;
-    }
-    public static CL_Pokemon returnClosetPokemon(List<CL_Pokemon> list, CL_Pokemon pokemon, dw_graph_algorithms algo)
-    {
-        double temp= Double.MAX_VALUE;
-        double dist;
-        CL_Pokemon tempPoke=null;
-        for (int i = 0; i <list.size() ; i++) {
-            if(list.get(i)!=pokemon&&list.get(i).youShouldSerchMe==null&&list.get(i).getMyAgent()==null)
-            {
-                dist=algo.shortestPathDist(pokemon.get_edge().getSrc(),list.get(i).get_edge().getSrc());
-                if(dist<temp&&dist!=-1) {
-                    temp = dist;
-                    tempPoke = list.get(i);
-                }
-            }
-        }
-        return tempPoke;
     }
 }

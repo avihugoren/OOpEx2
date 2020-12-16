@@ -14,23 +14,23 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
-	double dist=Double.MAX_VALUE;
-	CL_Agent youShouldSerchMe=null;
+	private double dist=Double.MAX_VALUE;//field that represent that distance from the closest pokemon
 	private CL_Agent myAgent;
 	 public double getDist()
 	{
 		return dist;
 	}
 
-	public void  setDist(double d)
+	public void  setDist(double distance)
 	{
-		this.dist=d;
+		this.dist=distance;
 	}
 
+     //function that get agent and its distance from the Pokemon
 	 public void setAgent(CL_Agent agent,double dist2)
 	{
-		myAgent= agent;
-		dist=dist2;
+		this.myAgent= agent;
+		this.dist=dist2;
 	}
 	   public CL_Agent getMyAgent()
 	{
@@ -89,13 +89,14 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 		this.min_ro = min_ro;
 	}
 
+	//function that equal pokemons by there geo location
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof CL_Pokemon))
-			return false;
+//		if (!(o instanceof CL_Pokemon))
+//			return false;
 		CL_Pokemon g = (CL_Pokemon) o;
 
-		if (!g.getLocation().equals(this.getLocation()))
+		if (!g.getLocation().equals(this.getLocation()))//equal pokemons by location
 		{
 			return false;
 		}
@@ -103,22 +104,18 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 		return true;
 	}
 	@Override
-	public int compareTo(@NotNull CL_Pokemon o) {
+	public int compareTo( CL_Pokemon o)
+	{
 		if(this._value>o.getValue())
 			return -1;
 		else if(this._value==o.getValue())
 			return 0;
 		return 1;
 	}
+	//function that gets pokemon and update this pokemon with the other pokemon extra fields
 	public void update(CL_Pokemon other)
 	{
 		this.dist=other.getDist();
-		this.youShouldSerchMe=other.youShouldSerchMe;
 		this.myAgent=other.getMyAgent();
-		//this._pos=other.getLocation();
-	//	this._edge=other.get_edge();
-		//this.min_dist=other.min_dist;
-	//	this.min_ro=other.min_ro;
-
 	}
 }

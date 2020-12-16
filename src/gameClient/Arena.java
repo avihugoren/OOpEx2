@@ -41,8 +41,10 @@ public class Arena {
 //		this.setAgents(r);
 //		this.setPokemons(p);
 //	}
+	//function that update the pokemons on the graph with the information coming from the server as json
 	public void setPokemons(List<CL_Pokemon> f)
 	{
+		//the first set of pokemons
 		if(_pokemons==null)
 		{
 			this._pokemons = f;
@@ -50,65 +52,62 @@ public class Arena {
 
 		}
 
+		//for loop that checks if the pokemons that comes from the server are already on the graph if yes its add them the fields that i created
 		for (int i = 0; i <f.size() ; i++)
-		{
-			for (int j = 0; j <_pokemons.size() ; j++)
-			{
-				if(f.get(i).equals(_pokemons.get(j)))
+			for (int j = 0; j < _pokemons.size(); j++)
+				if (f.get(i).equals(_pokemons.get(j))) //equal the Pokemon's by geo location
 				{
-					f.get(i).update(_pokemons.get(j));
-				//	_pokemons.remove(j);
+					f.get(i).update(_pokemons.get(j));//if equal update the fields
 					break;
 				}
-			}
-		}
-		this._pokemons=f;
+		this._pokemons=f;//update the Pokemon's list to the new list
 	}
-	public void setAgents(List<CL_Agent> f,String lg) throws JSONException {
-		if(_agents==null)
+	//function that get list of Agents (the Agents in the list came from a json that the server sends)
+	//this function update the Agents on the graph with information from the server
+	//the purpose of that is that the fields that added to the Agents will be saved from move to move of the game(because the json from the server does not contain them
+	public void setAgents(List<CL_Agent> f,String lg) throws JSONException
+	{
+		//its the first time that the Agents comes from the server
+		if(_agents == null)
 		{
 			this._agents = f;
 			return;
 		}
 		JSONObject line;
-		line = new JSONObject(lg);
+		line = new JSONObject(lg);//holds all the Agents
 		int id;
 		JSONObject agent;
-		JSONArray jsonArray=line.getJSONArray("Agents");
-		for (int i = 0; i <jsonArray.length(); i++)
+		//json array of the Agents
+		JSONArray jsonArray=line.getJSONArray("Agents");//hold json array of the Agents
+		//for each Agent in the Array update its information by its id
+		for (int i = 0; i < jsonArray.length(); i++)
 		{
 		  	agent= (JSONObject) jsonArray.get(i);
-		  	JSONObject a=agent.getJSONObject("Agent");
-		  	id=a.getInt("id");
+		  	JSONObject tempAgent=agent.getJSONObject("Agent");
+		  	tempAgent=agent.getJSONObject("Agent");//hold the information of one of the agents
+		  	id=tempAgent.getInt("id");
 
+		  	//for loop that find the agent that the json belong to by id and update its information
 			for (int j = 0; j <_agents.size() ; j++)
 			{
-				if(_agents.get(j).getID()==id)
+				if(_agents.get(j).getID() == id)
 				{
 
-					_agents.get(j).update(agent.toString());
+					_agents.get(j).update(agent.toString());//update the information of the agent
 					break;
 			    }
 
 		}
 		}
 
-//		for (int i = 0; i <_agents.size() ; i++) {
-//			for (int j = 0; j <f.size() ; j++) {
-//				if(_agents.get(i).getID()==f.get(j).getID())
-//				{
-//
-//				}
-//			}
-//
-//		}
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
 	private void init( ) {
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;
 		Iterator<node_data> iter = _gg.getV().iterator();
-		while(iter.hasNext()) {
+		while(iter.hasNext())
+		{
 			geo_location c = iter.next().getLocation();
 			if(MIN==null) {x0 = c.x(); y0=c.y(); x1=x0;y1=y0;MIN = new Point3D(x0,y0);}
 			if(c.x() < x0) {x0=c.x();}
@@ -121,27 +120,36 @@ public class Arena {
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
 		
 	}
-	public List<CL_Agent> getAgents() {return _agents;}
-	public List<CL_Pokemon> getPokemons() {return _pokemons;}
+	public List<CL_Agent> getAgents()
+	{
+		return _agents;
+	}
+	public List<CL_Pokemon> getPokemons()
+	{
+		return _pokemons;
+	}
 
 	
-	public directed_weighted_graph getGraph() {
+	public directed_weighted_graph getGraph()
+	{
 		return _gg;
 	}
-	public List<String> get_info() {
+	public List<String> get_info()
+	{
 		return _info;
 	}
-	public void set_info(List<String> _info) {
+	public void set_info(List<String> _info)
+	{
 		this._info = _info;
 	}
-
-	////////////////////////////////////////////////////
-	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
+	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg)
+	{
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
 			JSONObject ttt = new JSONObject(aa);
 			JSONArray ags = ttt.getJSONArray("Agents");
-			for(int i=0;i<ags.length();i++) {
+			for(int i = 0; i < ags.length() ; i++)
+			{
 				CL_Agent c = new CL_Agent(gg,0);
 				c.update(ags.get(i).toString());
 				ans.add(c);

@@ -24,10 +24,8 @@ public class CL_Agent  {
 		private CL_Pokemon _curr_fruit;
 		public  CL_Pokemon second;
 		private long _sg_dt;
-		public CL_Pokemon old;
-		private List<node_data> myRoute=new LinkedList<>();
-		private int WhereIamOnRoute=1;
-		private CL_Pokemon myPokemon;
+	    private CL_Pokemon old=null;
+		private CL_Pokemon myPokemon=null;
 		private int calculatedNextNode;
 
 		public void setCalculatedNextNode(int node)
@@ -42,20 +40,6 @@ public class CL_Agent  {
 		public void fixMe(CL_Agent other)
 		{
 			this._curr_edge=other._curr_edge;
-		}
-		public int giveMeNextNode()
-		{
-			if(myPokemon==null)
-				return -1;
-//			if(getSrcNode()==myPokemon.get_edge().getSrc())
-//				return myPokemon.get_edge().getDest();
-			WhereIamOnRoute++;
-			return myRoute.get(WhereIamOnRoute-1).getKey();
-		}
-		public void SetMyRoute( List<node_data> myRoute)
-		{
-			this.myRoute=myRoute;
-			WhereIamOnRoute=1;
 		}
 
 	 public void setMyPokemon(CL_Pokemon pokemon)
@@ -77,15 +61,18 @@ public class CL_Agent  {
 			_id = -1;
 			setSpeed(0);
 		}
-		public void update(String json) {
+		public void update(String json)
+		{
 			JSONObject line;
 			try {
 				// "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
 				line = new JSONObject(json);
 				JSONObject ttt = line.getJSONObject("Agent");
 				int id = ttt.getInt("id");
-				if(id==this.getID() || this.getID() == -1) {
-					if(this.getID() == -1) {_id = id;}
+				if(id==this.getID() || this.getID() == -1)
+				{
+					if(this.getID() == -1)
+					{_id = id;}
 					double speed = ttt.getDouble("speed");
 					String p = ttt.getString("pos");
 					Point3D pp = new Point3D(p);
@@ -104,8 +91,12 @@ public class CL_Agent  {
 			}
 		}
 		//@Override
-		public int getSrcNode() {return this._curr_node.getKey();}
-		public String toJSON() {
+		public int getSrcNode()
+		{
+			return this._curr_node.getKey();
+		}
+		public String toJSON()
+		{
 			int d = this.getNextNode();
 			String ans = "{\"Agent\":{"
 					+ "\"id\":"+this._id+","
@@ -144,18 +135,18 @@ public class CL_Agent  {
 			return ans;
 		}
 		public int getID() {
-			// TODO Auto-generated method stub
+
 			return this._id;
 		}
 	
-		public geo_location getLocation() {
-			// TODO Auto-generated method stub
+		public geo_location getLocation()
+		{
 			return _pos;
 		}
 
 		
-		public double getValue() {
-			// TODO Auto-generated method stub
+		public double getValue()
+		{
 			return this._value;
 		}
 
@@ -212,8 +203,13 @@ public class CL_Agent  {
 			this._sg_dt = _sg_dt;
 		}
 
-
-
+	public CL_Pokemon getOld() {
+		return old;
+	}
+	public void setOld (CL_Pokemon old)
+	{
+		this.old=old;
+	}
 
 
 //	@Override
