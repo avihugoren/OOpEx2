@@ -7,25 +7,29 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class MyClient implements Runnable{
-    private static MyFrame3 _win;
+    private static MyFrame _win;
     private static Arena _ar;
     double gameTime;
-
-
     private int id ;
     private int scenario_num;
-    ThreadGroup Group=new ThreadGroup("group");
+
+    /**
+     * get id and set the id of the client
+     * @param id
+     */
     public void setId(int id)
     {
         this.id=id;
     }
+    /**
+     * get num of level and set the scenario_num of the client
+     * @param num
+     */
     public void setScenarioNum(int num)
     {
         this. scenario_num=num;
@@ -35,16 +39,16 @@ public class MyClient implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-        game.login(314774159);
+        game.login(id);//uploaded the data for user with this id
         String g = game.getGraph();
         String pks = game.getPokemons();
         System.out.println(pks);
         //  directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
         directed_weighted_graph gg=buildGraphFromJason(game.getGraph());
-        init(game);
+        init(game);//Creating the graphical interface
 
         game.startGame();
-        panelTimer p=new panelTimer(game);
+        panelTimer p=new panelTimer(game);//creat new panel that add the timer to the frame
         _win.myPanel.add(p);
         _win.setVisible(true);
         gameTime=game.timeToEnd();
@@ -120,8 +124,6 @@ public class MyClient implements Runnable{
 
             }
 
-
-
         for(int i=0;i<_ar.getAgents().size();i++)
         {
             CL_Agent agent = _ar.getAgents().get(i);
@@ -139,7 +141,7 @@ public class MyClient implements Runnable{
         }
     }
     /**
-     * a very simple random walk implementation!
+     *
      * @param g
      * @return
      */
@@ -162,7 +164,8 @@ public class MyClient implements Runnable{
             for (CL_Pokemon pokemon : _ar.getPokemons())
             {
 //                    Arena.updateEdge(pokemon, g);
-                    dist = (algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc()))/Agent.getSpeed();
+                    dist=dist = (algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc()))/(Agent.getSpeed()*pokemon.getValue());
+                    //dist = (algo.shortestPathDist(Agent.getSrcNode(), pokemon.get_edge().getSrc()))/Agent.getSpeed();
                     //if the current pokemon is closer to the agent and also there no other agent that is closest to the pokemon
                     if ( dist < temp && dist != -1 && dist < pokemon.getDist())
                     {
@@ -215,6 +218,10 @@ public class MyClient implements Runnable{
 
     }
 
+    /**
+     * A function that creates the graphical interface
+     * @param game
+     */
     private void init(game_service game) {
         String g = game.getGraph();
         String fs = game.getPokemons();
@@ -223,11 +230,8 @@ public class MyClient implements Runnable{
         _ar = new Arena();
         _ar.setGraph(gg);
         _ar.setPokemons(Arena.json2Pokemons(fs));
-        _win = new MyFrame3("test Ex2",_ar);
+        _win = new MyFrame("test Ex2",_ar);
         _win.setSize(1000, 700);
-        //  _win.update(_ar);
-
-
         _win.show();
         _win.setVisible(true);
         String info = game.toString();

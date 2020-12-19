@@ -10,7 +10,7 @@ public class MyFrame3 extends JFrame {
     {
         super(s);
         myPanel=new MyPanel(ar);
-        this.add(myPanel);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.add(myPanel);//add the panel to the frame
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//Closing the frame will stop the program
     }
 }

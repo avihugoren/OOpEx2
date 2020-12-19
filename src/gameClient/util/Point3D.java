@@ -17,16 +17,28 @@ public class Point3D implements geo_location, Serializable{
      */
     public static final Point3D ORIGIN = new Point3D(0,0,0);
     private double _x,_y,_z;
+
+    /**
+     * constructor
+     * @param x,y,z
+     */
     public Point3D(double x, double y, double z) {
         _x=x;
         _y=y;
         _z=z;
     }
 
-    public Point3D(Point3D p) {
-       this(p.x(), p.y(), p.z());
-    }
-    public Point3D(double x, double y) {this(x,y,0);}
+    /**
+     * constructor that get x,y ans set z=0
+     * @param x,y
+     */
+    public Point3D(double x, double y) {
+        this(x,y,0);}
+
+    /**
+     * get Point3D from string
+     * @param s
+     */
     public Point3D(String s) { try {
             String[] a = s.split(",");
             _x = Double.parseDouble(a[0]);
@@ -38,15 +50,36 @@ public class Point3D implements geo_location, Serializable{
             throw(e);
         }
     }
+
+    /**
+     * get x
+     * @return
+     */
     @Override
     public double x() {return _x;}
+
+    /**
+     * get y
+     * @return
+     */
     @Override
     public double y() {return _y;}
+
+    /**
+     * get z
+     * @return
+     */
     @Override
     public double z() {return _z;}
 
 
     public String toString() { return _x+","+_y+","+_z; }
+
+    /**
+     * return the distance
+     * @param p2
+     * @return
+     */
     @Override
     public double distance(geo_location p2) {
         double dx = this.x() - p2.x();
@@ -56,15 +89,17 @@ public class Point3D implements geo_location, Serializable{
         return Math.sqrt(t);
     }
 
+    /**
+     * check if the 2  Point3D are equals
+     * @param p
+     * @return
+     */
     public boolean equals(Object p) {
         if(p==null || !(p instanceof geo_location)) {return false;}
         Point3D p2 = (Point3D)p;
         return ( (_x==p2._x) && (_y==p2._y) && (_z==p2._z) );
     }
-    public boolean close2equals(geo_location p2) {
-        return ( this.distance(p2) < EPS ); }
-    public boolean equalsXY (Point3D p)
-    {return p._x == _x && p._y == _y;}
+
 
      public String toString(boolean all) {
         if(all) return "[" + _x + "," +_y+","+_z+"]";

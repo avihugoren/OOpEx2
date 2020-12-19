@@ -20,57 +20,62 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This class represents a multi Agents Arena which move on a graph - grabs Pokemons and avoid the Zombies.
+ * This class represents a multi Agents Arena which move on a graph - grabs Pokemons .
  * @author boaz.benmoshe
  *
  */
 public class Arena {
-	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
+	public static final double EPS1 = 0.0001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
-	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 
-	public Arena() {;
-		_info = new ArrayList<String>();
+	/**
+	 * empty constructor
+	 */
+	public Arena()
+	{
 	}
-//	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
-//		_gg = g;
-//		this.setAgents(r);
-//		this.setPokemons(p);
-//	}
-	//function that update the pokemons on the graph with the information coming from the server as json
-	public void setPokemons(List<CL_Pokemon> f)
+
+	/**
+	 * get pokemon list if there already inside the arena update them with the extra fields that are not in the server
+	 * else just add them to the arena list of pokemons
+	 * @param pokemonList
+	 */
+	public void setPokemons(List<CL_Pokemon> pokemonList)
 	{
 		//the first set of pokemons
 		if(_pokemons==null)
 		{
-			this._pokemons = f;
+			this._pokemons = pokemonList;
 			return;
 
 		}
 
 		//for loop that checks if the pokemons that comes from the server are already on the graph if yes its add them the fields that i created
-		for (int i = 0; i <f.size() ; i++)
+		for (int i = 0; i <pokemonList.size() ; i++)
 			for (int j = 0; j < _pokemons.size(); j++)
-				if (f.get(i).equals(_pokemons.get(j))) //equal the Pokemon's by geo location
+				if (pokemonList.get(i).equals(_pokemons.get(j))) //equal the Pokemon's by geo location
 				{
-					f.get(i).update(_pokemons.get(j));//if equal update the fields
+					pokemonList.get(i).update(_pokemons.get(j));//if equal update the fields
 					break;
 				}
-		this._pokemons=f;//update the Pokemon's list to the new list
+		this._pokemons=pokemonList;//update the Pokemon's list to the new list
 	}
-	//function that get list of Agents (the Agents in the list came from a json that the server sends)
-	//this function update the Agents on the graph with information from the server
-	//the purpose of that is that the fields that added to the Agents will be saved from move to move of the game(because the json from the server does not contain them
-	public void setAgents(List<CL_Agent> f,String lg) throws JSONException
+	/**
+	 * get list of agent and json string of the agent from the server
+	 * update each agent with the information from the server
+	 * @param agentList
+	 * @param lg
+	 */
+	public void setAgents(List<CL_Agent> agentList,String lg) throws JSONException
 	{
 		//its the first time that the Agents comes from the server
 		if(_agents == null)
 		{
-			this._agents = f;
+			this._agents = agentList;
 			return;
 		}
 		JSONObject line;
@@ -88,21 +93,22 @@ public class Arena {
 		  	id=tempAgent.getInt("id");
 
 		  	//for loop that find the agent that the json belong to by id and update its information
-			for (int j = 0; j <_agents.size() ; j++)
-			{
-				if(_agents.get(j).getID() == id)
-				{
-
+			for (int j = 0; j < _agents.size() ; j++)
+				if (_agents.get(j).getID() == id) {
 					_agents.get(j).update(agent.toString());//update the information of the agent
 					break;
-			    }
-
-		}
+				}
 		}
 
 	}
+
+	/**
+	 * get graph set it in the arena
+	 * @param g
+	 */
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
-	private void init( ) {
+	private void init( )
+	{
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;
 		Iterator<node_data> iter = _gg.getV().iterator();
@@ -120,33 +126,50 @@ public class Arena {
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
 		
 	}
+	/**
+	 * return list of the agent in the arena
+	 * @return
+	 */
 	public List<CL_Agent> getAgents()
 	{
 		return _agents;
 	}
+	/**
+	 * return list of the pokemons in the arena
+	 * @return
+	 */
 	public List<CL_Pokemon> getPokemons()
 	{
 		return _pokemons;
 	}
-
-	
+	/**
+	 * return the graph
+	 * @return
+	 */
 	public directed_weighted_graph getGraph()
 	{
 		return _gg;
 	}
-	public List<String> get_info()
-	{
-		return _info;
-	}
-	public void set_info(List<String> _info)
-	{
-		this._info = _info;
-	}
-	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg)
+
+//	public List<String> get_info()
+//	{
+//		return _info;
+//	}
+//	public void set_info(List<String> _info)
+//	{
+//		this._info = _info;
+//	}
+	/**
+	 * return list of the agent taken from a json string
+	 * @param jsonString
+	 * @param gg
+	 * @return
+	 */
+	public static List<CL_Agent> getAgents(String jsonString, directed_weighted_graph gg)
 	{
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
-			JSONObject ttt = new JSONObject(aa);
+			JSONObject ttt = new JSONObject(jsonString);
 			JSONArray ags = ttt.getJSONArray("Agents");
 			for(int i = 0; i < ags.length() ; i++)
 			{
@@ -160,40 +183,62 @@ public class Arena {
 		}
 		return ans;
 	}
+	/**
+	 * return list of the poemons taken from a json string
+	 * @param fs
+	 * @return
+	 */
 	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
 		try {
 			JSONObject ttt = new JSONObject(fs);
 			JSONArray ags = ttt.getJSONArray("Pokemons");
-			for(int i=0;i<ags.length();i++) {
+			for(int i=0;i<ags.length();i++)
+			{
 				JSONObject pp = ags.getJSONObject(i);
 				JSONObject pk = pp.getJSONObject("Pokemon");
 				int t = pk.getInt("type");
 				double v = pk.getDouble("value");
-				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v,  null);
 				ans.add(f);
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		return ans;
 	}
-	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
+	/**
+	 * get pokemon and graph and update the edge of the pokemon on the garph
+	 * @param pokemon
+	 * @param g
+	 * @return
+	 */
+	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
-		while(itr.hasNext()) {
+		while(itr.hasNext())
+		{
 			node_data v = itr.next();
 			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
+			while(iter.hasNext())
+			{
 				edge_data e = iter.next();
-				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
-				if(f) {fr.set_edge(e);}
+				boolean f = isOnEdge(pokemon.getLocation(), e,pokemon.getType(), g);
+				if(f) {pokemon.set_edge(e);}
 			}
 		}
 	}
 
-	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
+	/**
+	 * get geo location p and get location of src and dest nodes
+	 * calculate if  p is on the edge between src and dest return true false otherwise
+	 * @param p
+	 * @param src
+	 * @param dest
+	 * @return
+	 */
+	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest )
+	{
 
 		boolean ans = false;
 		double dist = src.distance(dest);
@@ -201,16 +246,39 @@ public class Arena {
 		if(dist>d1-EPS2) {ans = true;}
 		return ans;
 	}
+	/**
+	 * get geo location p and 2 keys of nodes and a graph
+	 * return true if p is on the edge between s and d false otherwise
+	 * @param p
+	 * @param s
+	 * @param d
+	 * @param g
+	 * @return
+	 */
 	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
 		geo_location src = g.getNode(s).getLocation();
 		geo_location dest = g.getNode(d).getLocation();
 		return isOnEdge(p,src,dest);
 	}
+	/**
+	 * get geo location p and edge e type and directed graph g
+	 *  check if the type of the pokemon suitable for the edge
+	 *  if type is -1 dest needs to be smaller then src
+	 *  if type is 1 dest needs to be bigger then src
+	 * if type is suitable calculate if  p is on the edge between src and dest
+	 * @param p
+	 * @param e
+	 * @param type
+	 * @param g
+	 * @return
+	 */
 	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
 		int src = g.getNode(e.getSrc()).getKey();
 		int dest = g.getNode(e.getDest()).getKey();
-		if(type<0 && dest>src) {return false;}
-		if(type>0 && src>dest) {return false;}
+		if(type<0 && dest>src)
+		{return false;}
+		if(type>0 && src>dest)
+		{return false;}
 		return isOnEdge(p,src, dest, g);
 	}
 

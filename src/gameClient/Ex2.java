@@ -1,6 +1,6 @@
 package gameClient;
 
-public class main {
+public class Ex2 {
     public static frameStart frame;
     public static void main(String[] a) {
         MyClient n=new MyClient();
@@ -12,6 +12,8 @@ public class main {
             try {
                 id = Integer.parseInt(a[0]);
                 scenario_num = Integer.parseInt(a[1]);
+                n.setId(id);
+                n.setScenarioNum(scenario_num);
                 client.start();
             } catch (NumberFormatException e) {
                 n.setId(999);
