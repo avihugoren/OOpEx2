@@ -36,26 +36,7 @@ class ArenaTest {
 
     }
 
-    @Test
-    void getAgents()
-    {
-        directed_weighted_graph graph=new DWGraph_DS();
-        String stringJson= "{\"Agents\":[{\"Agent\":{\"id\":0,\"value\":5.0,\"src\":9,\"dest\":8,\"speed\":1.0,\"pos\":\"5,0,0.0\"}}]}";
-        graph.addNode(new NodeData(8));
-        graph.addNode(new NodeData(9));
-        graph.connect(8,9,1);
-        graph.connect(9,8,1);
-        graph.getNode(9).setLocation(new GeoLocation(5,0,0));
-        CL_Agent agent=new CL_Agent(graph,9);
-
-        agent.setNextNode(9);
-        List<CL_Agent>agentList=Arena.getAgents(stringJson,graph);
-
-        assertEquals(agent.getID(),agentList.get(0).getID());
-
-
-
-    }
+  
 
     @Test
     void getPokemons() {
