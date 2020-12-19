@@ -107,7 +107,7 @@ public class DWGraph_DS implements directed_weighted_graph
         edge_data tempEdge=getEdge(src,dest);
         if (tempEdge != null)//if the edge is already exists
         {
-            if (w == tempEdge.getWeight())//If the weight we received is the same as the existing weight גם מםאיןמע
+            if (w == tempEdge.getWeight())//If the weight we received is the same as the existing weight
                 return;
             edges--;//If we need to update the weight of the edge
         }

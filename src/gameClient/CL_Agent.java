@@ -23,6 +23,15 @@ public class CL_Agent  {
 		private int calculatedNextNode;
 	    private double _value;
 
+	public CL_Agent(directed_weighted_graph g, int start_node) {
+		_gg = g;
+		setMoney(0);
+		this._curr_node = _gg.getNode(start_node);
+		_pos = _curr_node.getLocation();
+		_id = -1;
+		setSpeed(0);
+	}
+
 	/**
 	 * get node key and set it as nextNode of this agent
 	 * @param node
@@ -40,11 +49,6 @@ public class CL_Agent  {
 			return calculatedNextNode;
 		}
 
-	/**
-	 * get agent other and set this agent edge with the value of other edge
-	 * @param other
-	 * @return
-	 */
 
 	/**
 	 * get pokemon and set this as myPokemon
@@ -63,16 +67,7 @@ public class CL_Agent  {
 			return myPokemon;
 		}
 
-		
-		
-		public CL_Agent(directed_weighted_graph g, int start_node) {
-			_gg = g;
-			setMoney(0);
-			this._curr_node = _gg.getNode(start_node);
-			_pos = _curr_node.getLocation();
-			_id = -1;
-			setSpeed(0);
-		}
+
 	/**
 	 * update the agent according to the data in the string
 	 * @param json
@@ -201,39 +196,6 @@ public class CL_Agent  {
 			this._speed = v;
 		}
 
-//		public CL_Pokemon get_curr_fruit() {
-//			return _curr_fruit;
-//		}
-//		public void set_curr_fruit(CL_Pokemon curr_fruit) {
-//			this._curr_fruit = curr_fruit;
-//		}
-//		public void set_SDT(long ddtt) {
-//			long ddt = ddtt;
-//			if(this._curr_edge!=null) {
-//				double w = get_curr_edge().getWeight();
-//				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-//				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
-//				double de = src.distance(dest);
-//				double dist = _pos.distance(dest);
-//				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-//					 dist = _curr_fruit.getLocation().distance(this._pos);
-//				}
-//				double norm = dist/de;
-//				double dt = w*norm / this.getSpeed();
-//				ddt = (long)(1000.0*dt);
-//			}
-//			this.set_sg_dt(ddt);
-//		}
-//
-	/**
-	 * return the current edge of the agent
-	 * @return
-	 */
-		public edge_data get_curr_edge() {
-			return this._curr_edge;
-		}
-
-
 
 	/**
 	 * return the agent old pokemon
@@ -251,12 +213,4 @@ public class CL_Agent  {
 		this.oldPokemon=old;
 	}
 
-
-//	@Override
-//	public void run(directed_weighted_graph gg,int src) {
-//			{
-//					int nextNode=MyClient.nextNode(gg, src);
-//
-//
-//	}
 }

@@ -52,6 +52,10 @@ public class panelStart extends JPanel implements ActionListener {
         buttonStart.addActionListener(this);//Listener presses the button _button
     }
 
+    /**
+     * A function that is performed when you press the button and start the game
+     * @param e
+     */
     public void actionPerformed(ActionEvent e) {
       int id=999;
       int level=0;
@@ -61,28 +65,14 @@ public class panelStart extends JPanel implements ActionListener {
             level = Integer.parseInt(textLevel.getText());////get the id from the string that insert in textLevel
         }catch (NumberFormatException E)
         {
-            //If the ID is string runs the game on level 0 with a 999 id.
+            //If the ID is string and not numbers runs the game on level 0 with a 999 id.
             System.out.println("Improper input");
         }
         n.setScenarioNum(level);//set the scenario num of the client to the level that was inserted
         n.setId(id);//set the id of the client to the id that was inserted
 
-        client.start();
+        client.start();//start the game
 
     }
 }
-
-
-//        if(level>23||level<0)
-//        {
-//            System.out.println("The level that enter is invalid");
-//        }
-//        try{
-//            n.setScenarioNum(level);
-//            n.setId(id);
-//        }
-//        catch(NullPointerException E){
-//
-//            System.out.println("The level that enter is invalid");
-//        }
 

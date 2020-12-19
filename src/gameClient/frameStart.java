@@ -6,10 +6,6 @@ public class frameStart extends JFrame {
 
     panelStart myPanel;
 
-    /**
-     * constructor
-     * @param s ,n,client
-     */
     public frameStart(String s,MyClient n,Thread client)
     {
         super(s);

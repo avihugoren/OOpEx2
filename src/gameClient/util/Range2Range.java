@@ -19,11 +19,22 @@ public class Range2Range {
 		_world = new Range2D(w);
 		_frame = new Range2D(f);
 	}
+
+	/**
+	 *Compute the point in the world frame and then Compute to the frame range
+	 * @param p
+	 * @return
+	 */
 	public geo_location world2frame(geo_location p) {
 		Point3D d = _world.getPortion(p);
 		Point3D ans = _frame.fromPortion(d);
 		return ans;
 	}
+
+	/**
+	 * return the frame
+	 * @return
+	 */
 	public Range2D getFrame() {
 		return _frame;
 	}

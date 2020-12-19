@@ -5,7 +5,16 @@ import java.lang.reflect.Type;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 
+/**
+ * this class implements desrializer and serializer for graph
+ */
 public class GraphJson implements JsonDeserializer<directed_weighted_graph>,JsonSerializer<directed_weighted_graph> {
+    /**
+     * deserializer for graph
+     * @param jsonDeserializationContext
+     * @param jsonElement
+     * @param type
+     */
     @Override
     public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -32,6 +41,12 @@ public class GraphJson implements JsonDeserializer<directed_weighted_graph>,Json
 
     }
 
+    /**
+     * serializer for graph
+     * @param jsonSerializationContext
+     * @param type
+     * @param directed_weighted_graph
+     */
     @Override
     public JsonElement serialize(directed_weighted_graph directed_weighted_graph, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject=new JsonObject();

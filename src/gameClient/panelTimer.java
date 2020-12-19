@@ -22,7 +22,6 @@ public class panelTimer extends JPanel {
         g.clearRect(0, 0, w, h);
         super.paintComponent(g);
         long timeToEnd = game.timeToEnd();
-        // this.setBackground(Color.ORANGE);
         this.setBounds(0, 0, 200, 50);
         g.setColor(Color.ORANGE);
         g.setFont(new Font("ARIEL", Font.BOLD, 18));

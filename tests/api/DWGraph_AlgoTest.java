@@ -39,7 +39,7 @@ class DWGraph_AlgoTest {
         dw_graph_algorithms g1=new DWGraph_Algo(graph);
          directed_weighted_graph g2=g1.copy();
          assertEquals(g1.getGraph(),g2);
-        graph.removeNode(0);
+        graph.removeNode(0);//Checks that copy make deep copy and change in one graph does not affect the other graph
         assertEquals(3,graph.nodeSize());
         assertEquals(4,g2.nodeSize());
     }
@@ -76,27 +76,28 @@ class DWGraph_AlgoTest {
        g.connect(2,3,3);
        dw_graph_algorithms g1=new DWGraph_Algo(g);
        assertEquals(4,g1.shortestPathDist(0,3));
-       assertEquals(-1,g1.shortestPathDist(0,4));
-       assertEquals(-1,g1.shortestPathDist(8,9));
-       assertEquals(0,g1.shortestPathDist(0,0));
+       assertEquals(-1,g1.shortestPathDist(0,4));//If there is no path
+       assertEquals(-1,g1.shortestPathDist(8,9));//if the node not in the graph
+       assertEquals(0,g1.shortestPathDist(0,0));//path from nose to himself is 0
     }
 
     @Test
     void shortestPath() {
         directed_weighted_graph g=graphBuilder(5);
         dw_graph_algorithms g1=new DWGraph_Algo(g);
-        assertNull(g1.shortestPath(0,9));
-        assertNull(g1.shortestPath(10,9));
+        assertNull(g1.shortestPath(0,9));//path with node that not in the graph return null
+        assertNull(g1.shortestPath(10,9));//if the 2 nodes is not in the graph
         g.connect(0,1,1);
         g.connect(0,2,1);
         g.connect(1,2,2);
         g.connect(2,3,3);
-        assertNull(g1.shortestPath(3,1));
+        assertNull(g1.shortestPath(3,1));//no path return null
         List<node_data> help=g1.shortestPath(0,3);
         assertEquals(3,help.size());
-        int[] arr={0,2,3};
+        int[] arr={0,2,3};//the path
         int i=0;
         boolean b =true;
+        //Goes over the path received from the function and compares to the array of the path that should be received
         for(node_data node:help) {
             if (node.getKey() != arr[i])
                 b = false;
@@ -120,10 +121,8 @@ class DWGraph_AlgoTest {
         dw_graph_algorithms algo=new DWGraph_Algo(g);
         g.connect(0,2,2);
         g.connect(0,1,2);
-        System.out.println(g);
         assertTrue(algo.save("testload"));
         algo.load("testload");
-        System.out.println(algo.getGraph());
         assertEquals(g,algo.getGraph());
         //empty graph
         directed_weighted_graph emptyGraph=new DWGraph_DS();
@@ -133,8 +132,9 @@ class DWGraph_AlgoTest {
         assertEquals(emptyGraph,algo.getGraph());
 
 
-    }
 
+    }
+    //help function to creat a graph
     public directed_weighted_graph graphBuilder(int size) {
         directed_weighted_graph g = new DWGraph_DS();
         for (int i = 0; i < size; i++) {

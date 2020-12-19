@@ -47,7 +47,6 @@ public class NodeAlgo implements Comparable<NodeAlgo> {
     /**
      * set the weight
      * @param newWeight
-     * @return
      */
     public void setWeight(double newWeight)
     {
@@ -57,7 +56,6 @@ public class NodeAlgo implements Comparable<NodeAlgo> {
     /**
      * set the parent
      * @param newParent
-     * @return
      */
     public void setParent(node_data newParent)
     {

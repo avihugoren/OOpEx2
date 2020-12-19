@@ -141,8 +141,9 @@ public class MyClient implements Runnable{
         }
     }
     /**
-     *
+     *gets agent and graph and return the next node the agent should go to based on distance speed and value
      * @param g
+     *@param Agent
      * @return
      */
     private static int nextNode(directed_weighted_graph g,CL_Agent Agent)

@@ -12,8 +12,6 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	private double _value;
 	private int _type;
 	private Point3D _pos;
-	private double min_dist;
-	private int min_ro;
 	private double dist=Double.MAX_VALUE;//field that represent that distance from the closest pokemon
 	private CL_Agent myAgent;
 	/**
@@ -56,8 +54,8 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	/**
 	 * constructor for pokemon
 	 * @param p
-	 * @parm t
-	 * @parm v
+	 * @param t
+	 * @param v
 	 * @param e
 	 */
 	public CL_Pokemon(Point3D p, int t, double v,  edge_data e) {
@@ -65,21 +63,7 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 		_value = v;
 		set_edge(e);
 		_pos = p;
-		min_dist = -1;
-		min_ro = -1;
 	}
-//	public static CL_Pokemon init_from_json(String json) {
-//		CL_Pokemon ans = null;
-//		try {
-//			JSONObject p = new JSONObject(json);
-//			int id = p.getInt("id");
-//
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//		return ans;
-//	}
 	/**
 	 * return string of the pokemon
 	 * @return
@@ -120,46 +104,12 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	public double getValue() {return _value;}
 
 	/**
-	 * return min_dist of the pokemon
-	 * @return
-	 */
-	public double getMin_dist() {
-		return min_dist;
-	}
-
-	/**
-	 * set the mid dist of the pokemon =
-	 * @param mid_dist
-	 */
-	public void setMin_dist(double mid_dist) {
-		this.min_dist = mid_dist;
-	}
-
-	/**
-	 * return the min_ro of the pokemon
-	 * @return
-	 */
-	public int getMin_ro() {
-		return min_ro;
-	}
-
-	/**
-	 * set the min_ro of the pokemon
-	 * @param min_ro
-	 */
-	public void setMin_ro(int min_ro) {
-		this.min_ro = min_ro;
-	}
-
-	/**
 	 * return true if 2 pokemon equal check that with their geo location false if otherwise
 	 * @param o
 	 * @return
 	 */
 	@Override
 	public boolean equals(Object o) {
-//		if (!(o instanceof CL_Pokemon))
-//			return false;
 		CL_Pokemon g = (CL_Pokemon) o;
 
 		if (!g.getLocation().equals(this.getLocation()))//equal pokemons by location
@@ -187,7 +137,6 @@ public class CL_Pokemon implements Comparable<CL_Pokemon>{
 	/**
 	 * get other pokemon and set this dist and myAgent to other values
 	 * @param other
-	 * @return
 	 */
 	public void update(CL_Pokemon other)
 	{

@@ -55,7 +55,8 @@ public class EdgeData implements edge_data
     }
 
     /**
-     * @return the weight of this edge (positive value).
+     * the weight of this edge (positive value).
+     * @return
      */
     @Override
     public double getWeight() {

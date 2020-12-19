@@ -36,7 +36,10 @@ public class DWGraph_Algo implements dw_graph_algorithms
      * @param g
      */
     @Override
-    public void init(directed_weighted_graph g) {
+    public void init(directed_weighted_graph g)
+    {
+        if(g == null)
+            return;
         myGraph=g;
     }
 
@@ -156,6 +159,12 @@ public class DWGraph_Algo implements dw_graph_algorithms
       return true;
     }
 
+    /**
+     * Returns the weight of the shortest path between src and dest -1 if such path is not exist
+     * @param src
+     * @param dest
+     * @return
+     */
     @Override
     public double shortestPathDist(int src, int dest) {
         if(myGraph==null)
@@ -169,6 +178,12 @@ public class DWGraph_Algo implements dw_graph_algorithms
         return dist;
     }
 
+    /**
+     * Returns list of all the nodes that take place in the shortest path between src and dest null if such path not exist
+     * @param src
+     * @param dest
+     * @return
+     */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
         if(myGraph==null)
@@ -191,10 +206,15 @@ public class DWGraph_Algo implements dw_graph_algorithms
             help.push(path.pop());
         return help;
     }
+    /**
+     * saves the myGraph to a file with json format
+     */
     @Override
     public boolean save(String file)
     {
-
+        if(myGraph==null)
+            return false;
+        ////write the graph to the file with the serialize function that i wrote on GraphJson
         Gson gson= new GsonBuilder().registerTypeAdapter(DWGraph_DS.class,new GraphJson()).create();
         String json=gson.toJson(myGraph);
         //Write json to file
@@ -211,12 +231,16 @@ public class DWGraph_Algo implements dw_graph_algorithms
         return true;
     }
 
+    /**
+     * load the graph from a file written in json format
+     */
     @Override
     public boolean load(String file) {
       if(myGraph==null)
             return false;
         try {
             GsonBuilder builder=new GsonBuilder();
+            //reads the file using graph deserializer that i wrote on GraphJson
             builder.registerTypeAdapter(directed_weighted_graph.class, new GraphJson());
             {
                 Gson json = builder.create();

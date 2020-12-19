@@ -78,12 +78,22 @@ public class Range {
 		this._min = _min;
 	}
 
+	/**
+	 * Compute d while referring to the axis of min and max
+	 * @param d
+	 * @return
+	 */
 	public double getPortion(double d) {
 		double d1 = d-_min;
 		double ans = d1/get_length();
 		return ans;
 	}
 
+	/**
+	 * Compute the original d before the getPortion
+	 * @param p
+	 * @return
+	 */
 	public double fromPortion(double p) {
 		return _min+p*get_length();
 	}

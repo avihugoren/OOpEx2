@@ -4,8 +4,17 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
+/**
+ * this class implements desrializer and serializer for node_data
+ */
 public class NodeJson implements JsonDeserializer<node_data>, JsonSerializer<node_data>
 {
+    /**
+     * deserializer for node_data
+     * @param jsonElement
+     * @param type
+     * @param jsonDeserializationContext
+     */
     @Override
     public node_data deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException
     {
@@ -29,6 +38,12 @@ public class NodeJson implements JsonDeserializer<node_data>, JsonSerializer<nod
         return node;
     }
 
+    /**
+     * serializer for node_data
+     * @param node_data
+     * @param type
+     * @param jsonSerializationContext
+     */
     @Override
     public JsonElement serialize(node_data node_data, Type type, JsonSerializationContext jsonSerializationContext)
     {

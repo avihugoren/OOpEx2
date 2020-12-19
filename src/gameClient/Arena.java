@@ -24,8 +24,9 @@ import java.util.List;
  * @author boaz.benmoshe
  *
  */
-public class Arena {
-	public static final double EPS1 = 0.0001, EPS2=EPS1*EPS1, EPS=EPS2;
+public class Arena
+{
+	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
@@ -151,14 +152,6 @@ public class Arena {
 		return _gg;
 	}
 
-//	public List<String> get_info()
-//	{
-//		return _info;
-//	}
-//	public void set_info(List<String> _info)
-//	{
-//		this._info = _info;
-//	}
 	/**
 	 * return list of the agent taken from a json string
 	 * @param jsonString
@@ -211,10 +204,9 @@ public class Arena {
 	 * get pokemon and graph and update the edge of the pokemon on the garph
 	 * @param pokemon
 	 * @param g
-	 * @return
 	 */
-	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
+	public static void updateEdge(CL_Pokemon pokemon, directed_weighted_graph g)
+	{
 		Iterator<node_data> itr = g.getV().iterator();
 		while(itr.hasNext())
 		{
@@ -282,10 +274,16 @@ public class Arena {
 		return isOnEdge(p,src, dest, g);
 	}
 
+	/**
+	 * return the range of the graph
+	 * @param g
+	 * @return
+	 */
 	private static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		double x0=0,x1=0,y0=0,y1=0;
 		boolean first = true;
+		//go over all the node and found the min x and y ant the max of x and y
 		while(itr.hasNext()) {
 			geo_location p = itr.next().getLocation();
 			if(first) {
@@ -304,6 +302,13 @@ public class Arena {
 		Range yr = new Range(y0,y1);
 		return new Range2D(xr,yr);
 	}
+
+	/**
+	 * Gets graph and frame and adjusts the graph to frame
+	 * @param g
+	 * @param frame
+	 * @return
+	 */
 	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
 		Range2D world = GraphRange(g);
 		Range2Range ans = new Range2Range(world, frame);
